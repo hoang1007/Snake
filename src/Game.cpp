@@ -28,6 +28,17 @@ Game::Game()
 				SDL_SetRenderDrawColor(renderer, R_BACKGROUND, G_BACKGROUND, B_BACKGROUND, 255);
 				SDL_RenderClear(renderer);
 			}
+
+			optionsRenderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+
+			if (optionsRenderer == NULL)
+				cerr << "Can't create options renderer" << SDL_GetError() << endl;
+			else
+			{
+				SDL_SetRenderDrawColor(optionsRenderer, 255, 0, 0, 255);
+				SDL_RenderClear(optionsRenderer);
+			}
+			
 		}
 		init();
 	}
@@ -58,6 +69,13 @@ void Game::init()
 	snake.paint(renderer, assets.texture, running, map.grassColor);
 	food.paint(renderer, assets.texture, assets.food);
 
+	//display pause game tutorial
+	SDL_Color pauseColor = {255, 255, 51};
+	
+	int x = WALL_X + GRID + WALL_WIDTH;
+	int y = SCREEN_HEIGHT / 2;
+
+	text.display(renderer, "press p to pause!", x, y, pauseColor);
 	SDL_RenderPresent(renderer);
 }
 
@@ -120,14 +138,16 @@ void Game::saveHighestScore()
 
 void Game::displayScore()
 {
-	const SDL_Color scoreColor = {255, 0, 0, 255},
+	const SDL_Color scoreColor = {255, 31, 31, 255},
 					highestScoreColor = {51, 25, 0, 255};
 	//set width and height enough to erase old render text
-	SDL_Rect scoreFrame = {WALL_X + WALL_WIDTH + 2 * GRID, WALL_Y + GRID, 5 * GRID, 5 * GRID};
-	text.display(renderer, "SCORE: " + to_string(score), scoreColor, scoreFrame);
+	int score_x = WALL_WIDTH + WALL_X + GRID,
+		score_y = WALL_Y + GRID;
+	text.display(renderer, "SCORE: " + to_string(score), score_x, score_y, scoreColor);
 
-	SDL_Rect highestScoreFrame = {scoreFrame.x, scoreFrame.y + 50, scoreFrame.w, scoreFrame.h};
-	text.display(renderer, "Highest Score: " + to_string(highestScore), highestScoreColor, highestScoreFrame);
+	int highestScore_x = score_x,
+		highestScore_y = score_y + 2 * GRID;
+	text.display(renderer, "Highest Score: " + to_string(highestScore), highestScore_x, highestScore_y, highestScoreColor);
 }
 
 void Game::Pause()
@@ -177,20 +197,24 @@ void Game::loop()
 				running = false;
 				break;
 			}
-			pollEvent(event);
+			if (event.type == SDL_KEYDOWN)
+				pollEvent(event);
 		}
 		
 		if (isPause == false)	update();
+	
+		//delay per frame
+		frameTime = SDL_GetTicks() - frameStart;
 
+		if (frameDelay > frameTime) 
+			SDL_Delay(frameDelay - frameTime);
+
+		//delay if snake dead
 		if (!running)
 		{
 			SDL_Delay(400);
 			break;
 		}
-		frameTime = SDL_GetTicks() - frameStart;
-
-		if (frameDelay > frameTime) 
-			SDL_Delay(frameDelay - frameTime);
 	}
 
 	saveHighestScore();

@@ -12,5 +12,5 @@ public:
     Text();
     Text(const string fontPath, const int fontSize);
 
-    void display(SDL_Renderer* renderer, string text, SDL_Color textColor, SDL_Rect dst);
+    void display(SDL_Renderer* renderer, string text, int x, int y, SDL_Color textColor);
 };
