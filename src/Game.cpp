@@ -38,7 +38,7 @@ void Game::init()
 	assets = Assets();
 	assets.load("game.png", renderer);
 	
-	int fontSize = 45;
+	int fontSize = 44;
 	text = Text("font.ttf", fontSize);
 
 	snake = Snake(4, assets.Snake);

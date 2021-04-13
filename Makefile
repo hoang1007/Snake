@@ -14,7 +14,6 @@ CXXFLAGS	:= -std=c++17 -Wall -Wextra -g
 #   their path using -Lpath, something like:
 LFLAGS = -lSDL2 -lSDL2main -lSDL2_image -lSDL2_ttf -lSDL2_mixer
 
-
 # define output directory
 OUTPUT	:= output
 
@@ -26,10 +25,6 @@ INCLUDE	:= include
 
 # define lib directory
 LIB		:= lib
-
-# define obj directory
-OBJ 	:= obj
-
 
 ifeq ($(OS),Windows_NT)
 MAIN	:= main.exe
