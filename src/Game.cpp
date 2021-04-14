@@ -28,17 +28,6 @@ Game::Game()
 				SDL_SetRenderDrawColor(renderer, R_BACKGROUND, G_BACKGROUND, B_BACKGROUND, 255);
 				SDL_RenderClear(renderer);
 			}
-
-			optionsRenderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-
-			if (optionsRenderer == NULL)
-				cerr << "Can't create options renderer" << SDL_GetError() << endl;
-			else
-			{
-				SDL_SetRenderDrawColor(optionsRenderer, 255, 0, 0, 255);
-				SDL_RenderClear(optionsRenderer);
-			}
-			
 		}
 		init();
 	}

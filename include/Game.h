@@ -9,7 +9,7 @@
 class Game
 {
 	SDL_Window* window;
-	SDL_Renderer* optionsRenderer;
+
 	void pollEvent(SDL_Event& event);
 	void update();
 
@@ -37,5 +37,6 @@ public:
 
 	Game();
 	void loop();
+	void play();
 	~Game();
 };
