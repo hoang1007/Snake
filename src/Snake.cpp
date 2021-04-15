@@ -31,16 +31,12 @@ Snake::Snake(int length, vector<vector<SDL_Rect>> src)
 
 void Snake::paint(SDL_Renderer* renderer, SDL_Texture* texture, bool aLive, SDL_Color grassColor[])
 {
-	if (temp == NULL)
-		for (int i = 1; i < size(); i++)
-			at(i).paint(renderer, texture, src[BODY][0]);
-	else 
-	{
-		at(1).paint(renderer, texture, src[BODY][0]);
-		//xoa phan render o tail cu
+	for (int i = 1; i < size(); i++)
+		at(i).paint(renderer, texture, src[BODY][0]);
+
+	if (temp != NULL)
 		temp->erase(renderer, grassColor);
-		back().erase(renderer, grassColor);
-	}
+	back().erase(renderer, grassColor);
 
 	int tailDir = (int) back().Dir;
 	back().paint(renderer, texture, src[TAIL][tailDir]);

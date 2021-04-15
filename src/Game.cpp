@@ -23,48 +23,41 @@ Game::Game()
 			
 			if (renderer == NULL)
 				 cerr << "Can't create renderer" <<  endl;
-			else
-			{
-				SDL_SetRenderDrawColor(renderer, R_BACKGROUND, G_BACKGROUND, B_BACKGROUND, 255);
-				SDL_RenderClear(renderer);
-			}
 		}
-		init();
+		//init stat 
+
+		assets = Assets();
+		assets.load("game.png", renderer);
+		
+		int fontSize = 44;
+		text = Text("font.ttf", fontSize);
+
+		snake = Snake(4, assets.Snake);
+
+		map = Map();
+
+		food = Food();
+
+		running = true;
+		isPause = false;
+
+		score = 0;
+		highestScore = getHighestScore();	//get highest score from file
 	}
 }
 
-void Game::init()
+void Game::paint()
 {
-	assets = Assets();
-	assets.load("game.png", renderer);
-	
-	int fontSize = 44;
-	text = Text("font.ttf", fontSize);
-
-	snake = Snake(4, assets.Snake);
-
-	map = Map();
-
-	food = Food();
-
-	running = true;
-	isPause = false;
-
-	score = 0;
-	highestScore = getHighestScore();	//get highest score from file
+	// clear old render
+	SDL_SetRenderDrawColor(renderer, R_BACKGROUND, G_BACKGROUND, B_BACKGROUND, 255);
+	SDL_RenderClear(renderer);
 
 	//present snake, food and map
 	map.paint(renderer, assets.texture, assets.wall);
 	snake.paint(renderer, assets.texture, running, map.grassColor);
 	food.paint(renderer, assets.texture, assets.food);
+	displayInformation();
 
-	//display pause game tutorial
-	SDL_Color pauseColor = {255, 255, 51};
-	
-	int x = WALL_X + GRID + WALL_WIDTH;
-	int y = SCREEN_HEIGHT / 2;
-
-	text.display(renderer, "press p to pause!", x, y, pauseColor);
 	SDL_RenderPresent(renderer);
 }
 
@@ -125,8 +118,9 @@ void Game::saveHighestScore()
 	}
 }
 
-void Game::displayScore()
+void Game::displayInformation()
 {
+	// display score
 	const SDL_Color scoreColor = {255, 31, 31, 255},
 					highestScoreColor = {51, 25, 0, 255};
 	//set width and height enough to erase old render text
@@ -137,15 +131,34 @@ void Game::displayScore()
 	int highestScore_x = score_x,
 		highestScore_y = score_y + 2 * GRID;
 	text.display(renderer, "Highest Score: " + to_string(highestScore), highestScore_x, highestScore_y, highestScoreColor);
+
+
+	//display pause game tutorial
+	SDL_Color pauseColor = {255, 255, 51};
+	
+	int x = WALL_X + GRID + WALL_WIDTH;
+	int y = SCREEN_HEIGHT / 2;
+
+	text.display(renderer, "press p to pause!", x, y, pauseColor);
 }
 
 void Game::Pause()
 {
 	isPause = true;
+	//delay when open menu
+	SDL_Delay(100);
+	SDL_Rect p = {0, 0, 500, 500};
+	SDL_SetRenderDrawColor(renderer, R_BACKGROUND, G_BACKGROUND, B_BACKGROUND, 255);
+	SDL_RenderFillRect(renderer, &p);
+	SDL_RenderPresent(renderer);
 }
+
 void Game::unPause()
 {
+	SDL_Delay(100);
 	isPause = false;
+
+	paint();
 }
 
 void Game::update()
@@ -166,7 +179,7 @@ void Game::update()
 			food.spawn();
 	food.paint(renderer, assets.texture, assets.food);
 
-	displayScore();
+	displayInformation();
 	SDL_RenderPresent(renderer);
 }
 
@@ -174,7 +187,7 @@ void Game::loop()
 {
 	Uint32 frameStart, frameTime;
 	SDL_Event event;
-
+	paint();
 	while (true)
 	{
 		frameStart = SDL_GetTicks();

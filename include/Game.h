@@ -23,10 +23,10 @@ class Game
 	int highestScore;
 	int getHighestScore();
 	void saveHighestScore();
-	void displayScore();
 	void Pause();
 	void unPause();
-	void init();
+	void paint();
+	void displayInformation();
 
 	const int FPS = 60;
 	int frameDelay = 8000 / FPS;
