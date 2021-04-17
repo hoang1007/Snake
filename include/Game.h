@@ -1,12 +1,16 @@
 #pragma once
-#include <SDL2/SDL.h>
+#include <map>
+#include <iostream>
 #include "Snake.h"
 #include "Assets.h"
 #include "Food.h"
-#include "Map.h"
+#include "Ground.h"
 #include "RenderText.h"
 #include "MediaPlayer.h"
 
+using namespace std;
+// enum sounds type
+enum Type {up, down, left, right, eat1, eat2, die};
 class Game
 {
 	SDL_Window* window;
@@ -17,9 +21,9 @@ class Game
 	Snake snake;
 	Assets assets;
 	Food food;
-	Map map;
+	Ground ground;
 	Text text;
-	vector<Media> sounds;
+	map<Type, Media> sounds;
 
 	int score;
 	int highestScore;

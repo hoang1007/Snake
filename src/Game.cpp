@@ -6,8 +6,6 @@
 
 using namespace std;
 
-enum {background, eat1, eat2, die};
-
 Game::Game()
 {
 	if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
@@ -36,7 +34,7 @@ Game::Game()
 
 		snake = Snake(4, assets.Snake);
 
-		map = Map();
+		ground = Ground();
 
 		food = Food();
 
@@ -52,17 +50,19 @@ Game::Game()
 
 void Game::soundsInit()
 {
-	Media background = Media("sounds/background.wav");
-	sounds.push_back(background);
+	sounds[Type::up] = Media("sounds/up.wav");
 
-	Media eat1 = Media("sounds/eat1.wav");
-	sounds.push_back(eat1);
+	sounds[Type::down] = Media("sounds/down.wav");
 
-	Media eat2 = Media("sounds/eat2.wav");
-	sounds.push_back(eat2);
+	sounds[Type::left] = Media("sounds/left.wav");
 
-	Media die = Media("sounds/die.wav");
-	sounds.push_back(die);
+	sounds[Type::right] = Media("sounds/right.wav");
+
+	sounds[Type::eat1] = Media("sounds/eat1.wav");
+
+	sounds[Type::eat2] = Media("sounds/eat2.wav");
+
+	sounds[Type::die] = Media("sounds/die.wav");
 }
 
 void Game::paint()
@@ -71,9 +71,9 @@ void Game::paint()
 	SDL_SetRenderDrawColor(renderer, R_BACKGROUND, G_BACKGROUND, B_BACKGROUND, 255);
 	SDL_RenderClear(renderer);
 
-	//present snake, food and map
-	map.paint(renderer, assets.texture, assets.wall);
-	snake.paint(renderer, assets.texture, running, map.grassColor);
+	//present snake, food and ground
+	ground.paint(renderer, assets.texture, assets.wall);
+	snake.paint(renderer, assets.texture, running, ground.grassColor);
 	food.paint(renderer, assets.texture, assets.food);
 	displayInformation();
 
@@ -86,23 +86,35 @@ void Game::pollEvent(SDL_Event& event)
 	{
 	case SDLK_w:
 	case SDLK_UP:
-		if (snake.preDir != Direction::down)
+		if (snake.preDir != Direction::down && !isPause)
+		{
 			snake.front().Dir = Direction::up;
+			sounds[Type::up].play(false);
+		}
 		break;
 	case SDLK_s:
 	case SDLK_DOWN:
-		if (snake.preDir != Direction::up)
+		if (snake.preDir != Direction::up && !isPause)
+		{
 			snake.front().Dir = Direction::down;
+			sounds[Type::down].play(false);
+		}
 		break;
 	case SDLK_a:
 	case SDLK_LEFT:
-		if (snake.preDir != Direction::right)
+		if (snake.preDir != Direction::right && !isPause)
+		{
 			snake.front().Dir = Direction::left;
+			sounds[Type::left].play(false);
+		}
 		break;
 	case SDLK_d:
 	case SDLK_RIGHT:
-		if (snake.preDir != Direction::left)
+		if (snake.preDir != Direction::left && !isPause)
+		{
 			snake.front().Dir = Direction::right;
+			sounds[Type::right].play(false);
+		}
 		break;
 	case SDLK_p:
 	case SDLK_SPACE:
@@ -185,7 +197,7 @@ void Game::update()
 	if (snake.move() == false)
 	{
 		running = false;
-		sounds[die].play(0);
+		sounds[die].play(false);
 	}
 
 	if (food == snake.front())
@@ -198,7 +210,7 @@ void Game::update()
 		score += 10;
 	}
 
-	snake.paint(renderer, assets.texture, running, map.grassColor);
+	snake.paint(renderer, assets.texture, running, ground.grassColor);
 
 	for (int i = 0; i < snake.size(); i++)
 		while (snake[i] == food)
@@ -213,7 +225,7 @@ void Game::loop()
 {
 	Uint32 frameStart, frameTime;
 	SDL_Event event;
-	sounds[background].play(true);
+	
 	paint();
 	while (true)
 	{
