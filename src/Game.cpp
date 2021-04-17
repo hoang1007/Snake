@@ -6,6 +6,8 @@
 
 using namespace std;
 
+enum {background, eat1, eat2, die};
+
 Game::Game()
 {
 	if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
@@ -38,12 +40,29 @@ Game::Game()
 
 		food = Food();
 
+		soundsInit();
+
 		running = true;
 		isPause = false;
 
 		score = 0;
 		highestScore = getHighestScore();	//get highest score from file
 	}
+}
+
+void Game::soundsInit()
+{
+	Media background = Media("sounds/background.wav");
+	sounds.push_back(background);
+
+	Media eat1 = Media("sounds/eat1.wav");
+	sounds.push_back(eat1);
+
+	Media eat2 = Media("sounds/eat2.wav");
+	sounds.push_back(eat2);
+
+	Media die = Media("sounds/die.wav");
+	sounds.push_back(die);
 }
 
 void Game::paint()
@@ -164,11 +183,18 @@ void Game::unPause()
 void Game::update()
 {
 	if (snake.move() == false)
-			running = false;
+	{
+		running = false;
+		sounds[die].play(0);
+	}
 
 	if (food == snake.front())
 	{
 		snake.isEatFood = true;
+		if (rand() % 2)
+			sounds[eat1].play(false);
+		else 
+			sounds[eat2].play(false);
 		score += 10;
 	}
 
@@ -187,6 +213,7 @@ void Game::loop()
 {
 	Uint32 frameStart, frameTime;
 	SDL_Event event;
+	sounds[background].play(true);
 	paint();
 	while (true)
 	{

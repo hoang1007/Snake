@@ -18,4 +18,3 @@ public:
 	void set();
 	void load(string path, SDL_Renderer* renderer);
 };
-

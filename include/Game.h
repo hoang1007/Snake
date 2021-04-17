@@ -5,6 +5,7 @@
 #include "Food.h"
 #include "Map.h"
 #include "RenderText.h"
+#include "MediaPlayer.h"
 
 class Game
 {
@@ -18,7 +19,8 @@ class Game
 	Food food;
 	Map map;
 	Text text;
-	
+	vector<Media> sounds;
+
 	int score;
 	int highestScore;
 	int getHighestScore();
@@ -27,7 +29,8 @@ class Game
 	void unPause();
 	void paint();
 	void displayInformation();
-
+	void soundsInit();
+	
 	const int FPS = 60;
 	int frameDelay = 8000 / FPS;
 	bool running;
