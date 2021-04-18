@@ -10,47 +10,25 @@ Assets::Assets()
 void Assets::set()
 {
 	int FRAME_SIZE = w / 4;
-	enum {UP, DOWN, LEFT, RIGHT};
-//set snake 
-	vector<SDL_Rect> head(4), tail(4), hit(4), body(1);
-head: {
-	head[UP] = {0, 0, FRAME_SIZE, FRAME_SIZE};
-	head[DOWN] = {FRAME_SIZE, 0, FRAME_SIZE, FRAME_SIZE};
-	head[LEFT] = {2 * FRAME_SIZE, 0, FRAME_SIZE, FRAME_SIZE};
-	head[RIGHT] = {3 * FRAME_SIZE, 0, FRAME_SIZE, FRAME_SIZE};
-}
 
-tail: {
-	tail[UP] = {0, FRAME_SIZE, FRAME_SIZE, FRAME_SIZE};
-	tail[DOWN] = {FRAME_SIZE, FRAME_SIZE, FRAME_SIZE, FRAME_SIZE};
-	tail[LEFT] = {2 * FRAME_SIZE, FRAME_SIZE, FRAME_SIZE, FRAME_SIZE};
-	tail[RIGHT] = {3 * FRAME_SIZE, FRAME_SIZE, FRAME_SIZE, FRAME_SIZE};
-}
-
-hit: {
-	hit[UP] = {0, 2 * FRAME_SIZE, FRAME_SIZE, FRAME_SIZE};
-	hit[DOWN] = {FRAME_SIZE, 2 * FRAME_SIZE, FRAME_SIZE, FRAME_SIZE};
-	hit[LEFT] = {2 * FRAME_SIZE, 2 * FRAME_SIZE, FRAME_SIZE, FRAME_SIZE};
-	hit[RIGHT] = {3 * FRAME_SIZE, 2 * FRAME_SIZE, FRAME_SIZE, FRAME_SIZE};
-}
-
-body: {
-	body[0] = {0, 4 * FRAME_SIZE, FRAME_SIZE, FRAME_SIZE};
-}
-
-	Snake.push_back(head);
-	Snake.push_back(tail);
-	Snake.push_back(hit);
-	Snake.push_back(body);
-//free vector
-	head.clear();	//head.~vector();
-	tail.clear();	//tail.~vector();
-	hit.clear();	//hit.~vector();
-	body.clear();	//body.~vector();
+//set snake
+	enum {HEAD, TAIL, CRASH, BODY, CORNER};
+	SDL_Rect head = {0, 0, FRAME_SIZE, FRAME_SIZE},
+			tail = {FRAME_SIZE, 0, FRAME_SIZE, FRAME_SIZE},
+			crash = {2 * FRAME_SIZE, 0, FRAME_SIZE, FRAME_SIZE},
+			body = {3 * FRAME_SIZE, 0, FRAME_SIZE, FRAME_SIZE},
+			corner = {0, FRAME_SIZE, FRAME_SIZE, FRAME_SIZE};
+		
+	snake.push_back(head);
+	snake.push_back(tail);
+	snake.push_back(crash);
+	snake.push_back(body);
+	snake.push_back(corner);
+	
 //set food
-	food = {FRAME_SIZE, 4 * FRAME_SIZE, FRAME_SIZE, FRAME_SIZE};
+	food = {FRAME_SIZE, FRAME_SIZE, FRAME_SIZE, FRAME_SIZE};
 //set wall
-	wall = {2 * FRAME_SIZE, 4 * FRAME_SIZE, FRAME_SIZE, FRAME_SIZE};
+	wall = {2 * FRAME_SIZE, FRAME_SIZE, FRAME_SIZE, FRAME_SIZE};
 }
 
 void Assets::load(string path, SDL_Renderer* renderer)

@@ -2,7 +2,7 @@
 #include "Console.h"
 #include <iostream>
 
-enum {HEAD, TAIL, HIT, BODY};
+enum {HEAD, TAIL, CRASH, BODY, CORNER};
 
 Snake::Snake()
 {
@@ -10,7 +10,7 @@ Snake::Snake()
 	preDir = Direction::null;
 }
 
-Snake::Snake(int length, vector<vector<SDL_Rect>> src)
+Snake::Snake(int length, vector<SDL_Rect> src)
 {
 	if (length <= 0)
 	{
@@ -32,20 +32,20 @@ Snake::Snake(int length, vector<vector<SDL_Rect>> src)
 void Snake::paint(SDL_Renderer* renderer, SDL_Texture* texture, bool aLive, SDL_Color grassColor[])
 {
 	for (int i = 1; i < size(); i++)
-		at(i).paint(renderer, texture, src[BODY][0]);
+		at(i).paint(renderer, texture, src[BODY]);
 
 	if (temp != NULL)
 		temp->erase(renderer, grassColor);
 	back().erase(renderer, grassColor);
 
 	int tailDir = (int) back().Dir;
-	back().paint(renderer, texture, src[TAIL][tailDir]);
+	back().paint(renderer, texture, src[TAIL]);
 
 	int headDir = (int) front().Dir;
 	if (aLive)	
-		front().paint(renderer, texture, src[HEAD][headDir]);
+		front().paint(renderer, texture, src[HEAD]);
 	else
-		front().paint(renderer, texture, src[HIT][headDir]);
+		front().paint(renderer, texture, src[CRASH]);
 }
 
 

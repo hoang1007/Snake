@@ -27,7 +27,25 @@ Block::Block(const Block& src)
 
 void Block::paint(SDL_Renderer* renderer, SDL_Texture* texture, SDL_Rect src)
 {
-	SDL_RenderCopy(renderer, texture, &src, this);
+	double angle = 0;
+	switch (Dir)
+	{
+	case Direction::up:
+		angle = -90;
+		break;
+	case Direction::down:
+		angle = 90;
+		break;
+	case Direction::right:
+		angle = 0;
+		break;
+	case Direction::left:
+		angle = 180;
+		break;
+	default:
+		break;
+	}
+	SDL_RenderCopyEx(renderer, texture, &src, this, angle, NULL, SDL_FLIP_NONE);
 }
 
 void Block::erase(SDL_Renderer* renderer, SDL_Color color)

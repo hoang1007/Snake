@@ -6,10 +6,9 @@ using namespace std;
 
 class Assets
 {
-	
 	int w, h;
 public:
-	vector< vector<SDL_Rect>> Snake;
+	vector<SDL_Rect> snake;
 	SDL_Rect food;
 	SDL_Rect wall;
 

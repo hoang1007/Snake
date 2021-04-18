@@ -27,12 +27,12 @@ Game::Game()
 		//init stat 
 
 		assets = Assets();
-		assets.load("game.png", renderer);
+		assets.load("assets.png", renderer);
 		
 		int fontSize = 44;
 		text = Text("font.ttf", fontSize);
 
-		snake = Snake(4, assets.Snake);
+		snake = Snake(4, assets.snake);
 
 		ground = Ground();
 

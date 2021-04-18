@@ -12,13 +12,13 @@ class Snake : public vector<Block>
 	Block* temp;
 	bool is_Suitable(Block newBlock);
 
-	vector<vector<SDL_Rect>> src;	//save position from assets image
+	vector<SDL_Rect> src;	//get resource from assets image
 public:
 	bool isEatFood;
 	Direction preDir;
 	int length;
 	Snake();
-	Snake(int length, vector<vector<SDL_Rect>> src);
+	Snake(int length, vector<SDL_Rect> src);
 	void paint(SDL_Renderer* renderer, SDL_Texture* texture, bool aLive, SDL_Color grassColor[]);
 	bool move();
 };
