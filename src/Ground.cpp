@@ -19,7 +19,7 @@ void Ground::paint(SDL_Renderer* renderer, SDL_Texture* texture, SDL_Rect src)
             if (i == WALL_X || i == WALL_WIDTH + WALL_X || j == WALL_Y || j == WALL_Y + WALL_HEIGHT)
                 point.paint(renderer, texture, src);
             else
-                    point.erase(renderer, (i + j) / GRID % 2 ? grassColor[0] : grassColor[1]);
+                point.erase(renderer, (i + j) / GRID % 2 ? grassColor[0] : grassColor[1]);
         }
     }
 }

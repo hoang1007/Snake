@@ -19,7 +19,7 @@ Snake::Snake(int length, vector<SDL_Rect> src)
 	}
 	
 	this->length = length;
-	preDir = Direction::null;
+	preDir = Direction::right;
 	this->src = src;
 	for (int i = 0; i < this->length; i++)
 	{
@@ -31,8 +31,16 @@ Snake::Snake(int length, vector<SDL_Rect> src)
 
 void Snake::paint(SDL_Renderer* renderer, SDL_Texture* texture, bool aLive, SDL_Color grassColor[])
 {
-	for (int i = 1; i < size(); i++)
-		at(i).paint(renderer, texture, src[BODY]);
+	for (int i = 1; i < size() - 1; i++)
+	{
+		if (at(i).isCorner)
+		{
+			at(i).erase(renderer, grassColor);
+			at(i).paint(renderer, texture, src[CORNER], (int) at(i + 1).Dir - (int) at(i).Dir);
+		}
+		else 
+			at(i).paint(renderer, texture, src[BODY]);
+	}
 
 	if (temp != NULL)
 		temp->erase(renderer, grassColor);
@@ -100,6 +108,7 @@ void Snake::mark_if_head_change()
 {
 	if (front().Dir != preDir)
 	{
+		front().isCorner = true;
 		preDir = front().Dir;
 		mark_if_change_direction.push_back(front());
 	}

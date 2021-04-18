@@ -32,7 +32,7 @@ Game::Game()
 		int fontSize = 44;
 		text = Text("font.ttf", fontSize);
 
-		snake = Snake(4, assets.snake);
+		snake = Snake(5, assets.snake);
 
 		ground = Ground();
 
@@ -197,16 +197,16 @@ void Game::update()
 	if (snake.move() == false)
 	{
 		running = false;
-		sounds[die].play(false);
+		sounds[Type::die].play(false);
 	}
 
 	if (food == snake.front())
 	{
 		snake.isEatFood = true;
 		if (rand() % 2)
-			sounds[eat1].play(false);
+			sounds[Type::eat1].play(false);
 		else 
-			sounds[eat2].play(false);
+			sounds[Type::eat2].play(false);
 		score += 10;
 	}
 
@@ -242,7 +242,7 @@ void Game::loop()
 				pollEvent(event);
 		}
 		
-		if (isPause == false)	update();
+		if (!isPause)	update();
 	
 		//delay per frame
 		frameTime = SDL_GetTicks() - frameStart;

@@ -10,7 +10,8 @@
 
 using namespace std;
 // enum sounds type
-enum Type {up, down, left, right, eat1, eat2, die};
+enum class Type {up, down, left, right, eat1, eat2, die};
+
 class Game
 {
 	SDL_Window* window;

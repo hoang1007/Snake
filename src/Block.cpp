@@ -3,6 +3,7 @@
 Block::Block()
 {
 	Dir = Direction::right;
+	isCorner = false;
 	x = WALL_WIDTH / 2;
 	y = WALL_HEIGHT / 2;
 	w = h = GRID;
@@ -11,6 +12,7 @@ Block::Block()
 Block::Block(int x, int y)
 {
 	Dir = Direction::right;
+	isCorner = false;
 	this->x = x;
 	this->y = y;
 	this->w = this->h = GRID;
@@ -45,6 +47,30 @@ void Block::paint(SDL_Renderer* renderer, SDL_Texture* texture, SDL_Rect src)
 	default:
 		break;
 	}
+	SDL_RenderCopyEx(renderer, texture, &src, this, angle, NULL, SDL_FLIP_NONE);
+}
+
+void Block::paint(SDL_Renderer* renderer, SDL_Texture* texture, SDL_Rect src, int code)
+{
+	double angle = 0;
+	switch (code)
+	{
+	case 2:
+		angle = 0;
+		break;
+	case -2:
+		angle = 180;
+		break;
+	case -1:
+		angle = -90;
+		break;
+	case 1:
+		angle = 90;
+		break;
+	default:
+		break;
+	}
+
 	SDL_RenderCopyEx(renderer, texture, &src, this, angle, NULL, SDL_FLIP_NONE);
 }
 
