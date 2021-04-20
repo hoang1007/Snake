@@ -6,21 +6,24 @@ enum {HEAD, TAIL, CRASH, BODY, CORNER};
 
 Snake::Snake()
 {
+	alive = true;
 	length = 0;
 	preDir = Direction::null;
 }
 
 Snake::Snake(int length, vector<SDL_Rect> src)
 {
+	alive = true;
 	if (length <= 0)
 	{
 		SDL_Log("Please insert avaible length\n");
 		return;
 	}
-	
+
 	this->length = length;
 	preDir = Direction::right;
 	this->src = src;
+
 	for (int i = 0; i < this->length; i++)
 	{
 		Block newBlock(WALL_WIDTH / 2 - i * GRID, WALL_HEIGHT / 2);
@@ -29,7 +32,7 @@ Snake::Snake(int length, vector<SDL_Rect> src)
 	temp = NULL;
 }
 
-void Snake::paint(SDL_Renderer* renderer, SDL_Texture* texture, bool aLive, SDL_Color grassColor[])
+void Snake::paint(SDL_Renderer* renderer, SDL_Texture* texture, SDL_Color grassColor[])
 {
 	for (int i = 1; i < size() - 1; i++)
 	{
@@ -50,14 +53,14 @@ void Snake::paint(SDL_Renderer* renderer, SDL_Texture* texture, bool aLive, SDL_
 	back().paint(renderer, texture, src[TAIL]);
 
 	int headDir = (int) front().Dir;
-	if (aLive)	
+	if (alive)	
 		front().paint(renderer, texture, src[HEAD]);
 	else
 		front().paint(renderer, texture, src[CRASH]);
 }
 
 
-bool Snake::move()
+void Snake::move()
 {
 	Block newBlock(front());
 
@@ -84,14 +87,13 @@ bool Snake::move()
 	
 	if (is_Suitable(newBlock))
 		insert(begin(), newBlock);
-	else return false;
+	else
+		alive = false;
 
 	temp = new Block(back());
 	if (!isEatFood)
 		pop_back();
 	else isEatFood = false;
-
-	return true;
 }
 
 void Snake::change_Dir_tail()
@@ -104,6 +106,7 @@ void Snake::change_Dir_tail()
 		mark_if_change_direction.erase(mark_if_change_direction.begin());
 	}
 }
+
 void Snake::mark_if_head_change()
 {
 	if (front().Dir != preDir)
