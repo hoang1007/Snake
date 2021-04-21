@@ -1,84 +1,10 @@
-#include "Game.h"
-#include "Console.h"
+#include "Game.hpp"
+#include "Console.hpp"
 #include <iostream>
 #include <fstream>
 #include <string>
 
 using namespace std;
-
-Game::Game()
-{
-	if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
-		cerr << "Game's console can't initalize!" << SDL_GetError() <<  endl;
-	else
-	{
-		window = SDL_CreateWindow("Let's Play Fun! ^^", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-			SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-		
-		if (window == NULL)
-			 cerr << "Can't create window" <<  endl;
-		else
-		{
-			renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-			
-			if (renderer == NULL)
-				 cerr << "Can't create renderer" <<  endl;
-		}
-		//init stat 
-
-		assets = Assets();
-		assets.load("assets.png", renderer);
-		
-		int fontSize = 44;
-		text = Text("font.ttf", fontSize);
-
-		snake = Snake(5, assets.snake);
-
-		ground = Ground();
-
-		food = Food();
-
-		soundsInit();
-
-		running = true;
-		isPause = false;
-
-		score = 0;
-		highestScore = getHighestScore();	//get highest score from file
-	}
-}
-
-void Game::soundsInit()
-{
-	sounds[Type::up] = Media("sounds/up.wav");
-
-	sounds[Type::down] = Media("sounds/down.wav");
-
-	sounds[Type::left] = Media("sounds/left.wav");
-
-	sounds[Type::right] = Media("sounds/right.wav");
-
-	sounds[Type::eat1] = Media("sounds/eat1.wav");
-
-	sounds[Type::eat2] = Media("sounds/eat2.wav");
-
-	sounds[Type::die] = Media("sounds/die.wav");
-}
-
-void Game::paint()
-{
-	// clear old render
-	SDL_SetRenderDrawColor(renderer, R_BACKGROUND, G_BACKGROUND, B_BACKGROUND, 255);
-	SDL_RenderClear(renderer);
-
-	//present snake, food and ground
-	ground.paint(renderer, assets.texture, assets.wall);
-	snake.paint(renderer, assets.texture, running, ground.grassColor);
-	food.paint(renderer, assets.texture, assets.food);
-	displayInformation();
-
-	SDL_RenderPresent(renderer);
-}
 
 void Game::pollEvent(SDL_Event& event)
 {
@@ -86,35 +12,23 @@ void Game::pollEvent(SDL_Event& event)
 	{
 	case SDLK_w:
 	case SDLK_UP:
-		if (snake.preDir != Direction::down && !isPause)
-		{
-			snake.front().Dir = Direction::up;
-			sounds[Type::up].play(false);
-		}
+			snake.nextDir = UP;
+			sounds[CHANGE_DIRECTION_UP].play(false);
 		break;
 	case SDLK_s:
 	case SDLK_DOWN:
-		if (snake.preDir != Direction::up && !isPause)
-		{
-			snake.front().Dir = Direction::down;
-			sounds[Type::down].play(false);
-		}
+			snake.nextDir = DOWN;
+			sounds[CHANGE_DIRECTION_DOWN].play(false);
 		break;
 	case SDLK_a:
 	case SDLK_LEFT:
-		if (snake.preDir != Direction::right && !isPause)
-		{
-			snake.front().Dir = Direction::left;
-			sounds[Type::left].play(false);
-		}
+			snake.nextDir = LEFT;
+			sounds[CHANGE_DIRECTION_LEFT].play(false);
 		break;
 	case SDLK_d:
 	case SDLK_RIGHT:
-		if (snake.preDir != Direction::left && !isPause)
-		{
-			snake.front().Dir = Direction::right;
-			sounds[Type::right].play(false);
-		}
+			snake.nextDir = RIGHT;
+			sounds[CHANGE_DIRECTION_RIGHT].play(false);
 		break;
 	case SDLK_p:
 	case SDLK_SPACE:
@@ -194,23 +108,18 @@ void Game::unPause()
 
 void Game::update()
 {
-	if (snake.move() == false)
-	{
-		running = false;
-		sounds[Type::die].play(false);
-	}
+	snake.move();
+	if (!snake.alive)
+		sounds[SNAKE_DIE].play(false);
 
 	if (food == snake.front())
 	{
 		snake.isEatFood = true;
-		if (rand() % 2)
-			sounds[Type::eat1].play(false);
-		else 
-			sounds[Type::eat2].play(false);
+		sounds[rand() % 2 ? SNAKE_EAT_1 : SNAKE_EAT_2].play(false);
 		score += 10;
 	}
 
-	snake.paint(renderer, assets.texture, running, ground.grassColor);
+	snake.paint(renderer, assets.texture, ground.grassColor);
 
 	for (int i = 0; i < snake.size(); i++)
 		while (snake[i] == food)
@@ -251,11 +160,12 @@ void Game::loop()
 			SDL_Delay(frameDelay - frameTime);
 
 		//delay if snake dead
-		if (!running)
+		if (!snake.alive)
 		{
 			SDL_Delay(400);
 			break;
 		}
+		if (!running) break;
 	}
 
 	saveHighestScore();

@@ -1,4 +1,4 @@
-#include "Assets.h"
+#include "Assets.hpp"
 #include <SDL2/SDL_image.h>
 #include <iostream>
 

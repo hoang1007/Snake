@@ -1,8 +1,8 @@
-#include "Block.h"
+#include "Block.hpp"
 
 Block::Block()
 {
-	Dir = Direction::right;
+	Dir = RIGHT;
 	isCorner = false;
 	x = WALL_WIDTH / 2;
 	y = WALL_HEIGHT / 2;
@@ -11,7 +11,7 @@ Block::Block()
 
 Block::Block(int x, int y)
 {
-	Dir = Direction::right;
+	Dir = RIGHT;
 	isCorner = false;
 	this->x = x;
 	this->y = y;
@@ -33,21 +33,22 @@ void Block::paint(SDL_Renderer* renderer, SDL_Texture* texture, SDL_Rect src)
 	double angle = 0;
 	switch (Dir)
 	{
-	case Direction::up:
+	case UP:
 		angle = -90;
 		break;
-	case Direction::down:
+	case DOWN:
 		angle = 90;
 		break;
-	case Direction::right:
+	case RIGHT:
 		angle = 0;
 		break;
-	case Direction::left:
+	case LEFT:
 		angle = 180;
 		break;
 	default:
 		break;
 	}
+
 	SDL_RenderCopyEx(renderer, texture, &src, this, angle, NULL, SDL_FLIP_NONE);
 }
 
@@ -83,7 +84,7 @@ void Block::erase(SDL_Renderer* renderer, SDL_Color color)
 
 void Block::erase(SDL_Renderer* renderer, SDL_Color color[])
 {
-	if ((this->x + this->y) / GRID % 2)
+	if ((x + y) / GRID % 2)
 		erase(renderer, color[0]);
 	else erase(renderer, color[1]);
 }

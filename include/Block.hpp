@@ -1,8 +1,8 @@
 #pragma once
 #include <SDL2/SDL.h>
-#include "Console.h"
+#include "Console.hpp"
 
-enum class Direction {up, left, right, down, null};
+enum Direction {UP, LEFT, RIGHT, DOWN};
 
 struct Block : public SDL_Rect
 {

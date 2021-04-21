@@ -1,5 +1,5 @@
-#include "RenderText.h"
-#include "Console.h"
+#include "RenderText.hpp"
+#include "Console.hpp"
 #include <SDL2/SDL_image.h>
 #include <iostream>
 

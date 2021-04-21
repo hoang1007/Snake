@@ -1,16 +1,17 @@
 #pragma once
 #include <map>
 #include <iostream>
-#include "Snake.h"
-#include "Assets.h"
-#include "Food.h"
-#include "Ground.h"
-#include "RenderText.h"
-#include "MediaPlayer.h"
+#include "Snake.hpp"
+#include "Assets.hpp"
+#include "Food.hpp"
+#include "Ground.hpp"
+#include "RenderText.hpp"
+#include "MediaPlayer.hpp"
 
 using namespace std;
 // enum sounds type
-enum class Type {up, down, left, right, eat1, eat2, die};
+const int TOTAL_SOUNDS = 7;
+enum SoundType {CHANGE_DIRECTION_UP, CHANGE_DIRECTION_DOWN, CHANGE_DIRECTION_LEFT, CHANGE_DIRECTION_RIGHT, SNAKE_EAT_1, SNAKE_EAT_2, SNAKE_DIE};
 
 class Game
 {
@@ -24,7 +25,7 @@ class Game
 	Food food;
 	Ground ground;
 	Text text;
-	map<Type, Media> sounds;
+	Media sounds[TOTAL_SOUNDS];
 
 	int score;
 	int highestScore;
