@@ -57,6 +57,7 @@ void Game::init()
 void Game::buttonInit()
 {
 	int w = 400, h = 200,
+	// can giua man hinh
 	x = (SCREEN_WIDTH - w) / 2,
 	y = SCREEN_HEIGHT / 3;
 
@@ -67,19 +68,19 @@ void Game::buttonInit()
 
 void Game::soundsInit()
 {
-	sounds[Type::up] = Media("sounds/up.wav");
+	sounds[CHANGE_DIRECTION_UP] = Media("sounds/up.wav");
 
-	sounds[Type::down] = Media("sounds/down.wav");
+	sounds[CHANGE_DIRECTION_DOWN] = Media("sounds/down.wav");
 
-	sounds[Type::left] = Media("sounds/left.wav");
+	sounds[CHANGE_DIRECTION_LEFT] = Media("sounds/left.wav");
 
-	sounds[Type::right] = Media("sounds/right.wav");
+	sounds[CHANGE_DIRECION_RIGHT] = Media("sounds/right.wav");
 
-	sounds[Type::eat1] = Media("sounds/eat1.wav");
+	sounds[SNAKE_EAT_1] = Media("sounds/eat1.wav");
 
-	sounds[Type::eat2] = Media("sounds/eat2.wav");
+	sounds[SNAKE_EAT_2] = Media("sounds/eat2.wav");
 
-	sounds[Type::die] = Media("sounds/die.wav");
+	sounds[SNAKE_DIE] = Media("sounds/die.wav");
 }
 
 Game::~Game()

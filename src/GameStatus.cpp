@@ -9,11 +9,11 @@ void Game::Pause()
 	//clear screen
 	clrscr(200);
 
-	SDL_Color colorPauseButton = {255, 0, 0, 255};
-	button[HOME].present(renderer, colorPauseButton);
+	SDL_Color colorHomeButton = {255, 0, 0, 255};
+	button[HOME].paint(renderer, colorHomeButton);
 
-	SDL_Color colorHomeButton = {0, 255, 0, 255};
-	button[QUIT].present(renderer, colorHomeButton);
+	SDL_Color colorQuitButton = {0, 255, 0, 255};
+	button[QUIT].paint(renderer, colorQuitButton);
 	SDL_RenderPresent(renderer);
 }
 
@@ -26,4 +26,9 @@ void Game::unPause()
 	isPause = false;
 
 	paint();
+}
+
+void Game::clear()
+{
+    snake.~Snake();
 }

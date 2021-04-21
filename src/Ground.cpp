@@ -9,6 +9,7 @@ Ground::Ground()
 
 void Ground::paint(SDL_Renderer* renderer, SDL_Texture* texture, SDL_Rect src)
 {
+    // ve map voi mau grass so le nhau
     for (int i = WALL_X; i <= WALL_WIDTH + WALL_X; i += GRID)
     {
         for (int j = WALL_Y; j <= WALL_HEIGHT + WALL_Y; j += GRID)

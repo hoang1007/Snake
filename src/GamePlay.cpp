@@ -6,25 +6,25 @@ void Game::update()
 {
 	snake.move();
 
-	if (!snake.alive)
-		sounds[Type::die].play(false);
-
 	if (food == snake.front())
 	{
 		snake.isEatFood = true;
 		if (rand() % 2)
-			sounds[Type::eat1].play(false);
+			sounds[SNAKE_EAT_1].play(false);
 		else 
-			sounds[Type::eat2].play(false);
+			sounds[SNAKE_EAT_2].play(false);
 		score += 10;
 	}
-
-	snake.paint(renderer, assets.texture, ground.grassColor);
 
 	for (int i = 0; i < snake.size(); i++)
 		while (snake[i] == food)
 			food.spawn();
 	food.paint(renderer, assets.texture, assets.food);
+	
+	if (!snake.alive)
+		sounds[SNAKE_DIE].play(false);
+
+	snake.paint(renderer, assets.texture, ground.grassColor);
 
 	displayInformation();
 	SDL_RenderPresent(renderer);
@@ -58,12 +58,12 @@ void Game::loop()
 			}
 		}
 		
-		if (!isPause)	update();
+		if (!isPause) update();	// neu game khong tam dung thi tiep tuc cap nhat
 	
 		//delay per frame
 		frameTime = SDL_GetTicks() - frameStart;
 
-		if (frameDelay > frameTime) 
+		if (frameDelay > frameTime) // nau thoi gian load khung hinh nho hon do tre khung hinh
 			SDL_Delay(frameDelay - frameTime);
 
 		//delay if snake dead
@@ -77,6 +77,7 @@ void Game::loop()
 	}
 
 	saveHighestScore();
+	//snake.~Snake();
 }
 
 void Game::play()
@@ -93,14 +94,13 @@ void Game::play()
 
 		if (!snake.alive)
 		{
-
 			clrscr(100);
 
 			SDL_Color c = {128, 255, 128, 255};
-			button[RESTART].present(renderer, c);
+			button[RESTART].paint(renderer, c);
 
 			SDL_Color d = {255, 255, 0, 255};
-			button[QUIT].present(renderer, d);
+			button[QUIT].paint(renderer, d);
 			SDL_RenderPresent(renderer);
 
 			while (SDL_PollEvent(&e))
@@ -122,7 +122,6 @@ void Game::play()
 					else if (button[RESTART].isClicked(x, y))
 					{
 						init();
-						paint();
 						loop();
 					}
 				}
@@ -142,7 +141,7 @@ void Game::pollEvent(SDL_Event& event)
 		if (snake.preDir != Direction::down && !isPause)
 		{
 			snake.front().Dir = Direction::up;
-			sounds[Type::up].play(false);
+			sounds[CHANGE_DIRECTION_UP].play(false);
 		}
 		break;
 	case SDLK_s:
@@ -150,7 +149,7 @@ void Game::pollEvent(SDL_Event& event)
 		if (snake.preDir != Direction::up && !isPause)
 		{
 			snake.front().Dir = Direction::down;
-			sounds[Type::down].play(false);
+			sounds[CHANGE_DIRECTION_DOWN].play(false);
 		}
 		break;
 	case SDLK_a:
@@ -158,7 +157,7 @@ void Game::pollEvent(SDL_Event& event)
 		if (snake.preDir != Direction::right && !isPause)
 		{
 			snake.front().Dir = Direction::left;
-			sounds[Type::left].play(false);
+			sounds[CHANGE_DIRECTION_LEFT].play(false);
 		}
 		break;
 	case SDLK_d:
@@ -166,7 +165,7 @@ void Game::pollEvent(SDL_Event& event)
 		if (snake.preDir != Direction::left && !isPause)
 		{
 			snake.front().Dir = Direction::right;
-			sounds[Type::right].play(false);
+			sounds[CHANGE_DIRECION_RIGHT].play(false);
 		}
 		break;
 	case SDLK_p:

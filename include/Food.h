@@ -4,5 +4,6 @@
 struct Food : public Block
 {
     Food();
+    // random vi tri cua food
     void spawn();
 };

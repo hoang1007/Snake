@@ -45,14 +45,14 @@ void Button::erase()
     isPresent = false;
 }
 
-void Button::present(SDL_Renderer* renderer, SDL_Color color)
+void Button::paint(SDL_Renderer* renderer, SDL_Color color)
 {
     isPresent = true;
     SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
     SDL_RenderFillRect(renderer, this);
 }
 
-void Button::present(SDL_Renderer* renderer)
+void Button::paint(SDL_Renderer* renderer)
 {
     isPresent = true;
     SDL_RenderCopy(renderer, texture, NULL, this);

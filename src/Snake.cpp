@@ -59,7 +59,6 @@ void Snake::paint(SDL_Renderer* renderer, SDL_Texture* texture, SDL_Color grassC
 		front().paint(renderer, texture, src[CRASH]);
 }
 
-
 void Snake::move()
 {
 	Block newBlock(front());
@@ -91,6 +90,7 @@ void Snake::move()
 		alive = false;
 
 	temp = new Block(back());
+
 	if (!isEatFood)
 		pop_back();
 	else isEatFood = false;
@@ -125,4 +125,10 @@ bool Snake::is_Suitable(Block newBlock)
 			newBlock.y <= WALL_X || newBlock.y >= WALL_Y + WALL_HEIGHT)
 		return false;
 	return true;
+}
+
+Snake::~Snake()
+{
+	for (int i = 0; i < size(); i++)
+		at(i).isCorner = false;
 }

@@ -9,9 +9,9 @@ Assets::Assets()
 
 void Assets::set()
 {
-	int FRAME_SIZE = w / 4;
+	int FRAME_SIZE = w / 4;	// chieu rong va chieu cao cua moi khung hinh trong file nguon
 
-//set snake
+// dat vi tri cho ran 
 	enum {HEAD, TAIL, CRASH, BODY, CORNER};
 	SDL_Rect head = {0, 0, FRAME_SIZE, FRAME_SIZE},
 			tail = {FRAME_SIZE, 0, FRAME_SIZE, FRAME_SIZE},
@@ -25,10 +25,10 @@ void Assets::set()
 	snake.push_back(body);
 	snake.push_back(corner);
 	
-//set food
+// dat vi tri cho thuc an
 	food = {FRAME_SIZE, FRAME_SIZE, FRAME_SIZE, FRAME_SIZE};
-//set wall
-	wall = {2 * FRAME_SIZE, FRAME_SIZE, FRAME_SIZE, FRAME_SIZE};
+// dat vi tri cho da
+	rock = {2 * FRAME_SIZE, FRAME_SIZE, FRAME_SIZE, FRAME_SIZE};
 }
 
 void Assets::load(string path, SDL_Renderer* renderer)
@@ -38,7 +38,7 @@ void Assets::load(string path, SDL_Renderer* renderer)
 		cerr << "Unable to init PNG " << IMG_GetError() << endl;
 		return ;
 	}
-	SDL_Surface* loadIMG = IMG_Load(path.c_str());
+	SDL_Surface* loadIMG = IMG_Load(path.c_str());	//load anh tu nguon va surface
 
 	if (loadIMG == NULL)
 	{
@@ -49,16 +49,15 @@ void Assets::load(string path, SDL_Renderer* renderer)
 	w = loadIMG->w;
 	h = loadIMG->h;
 
-	SDL_SetColorKey(loadIMG, SDL_TRUE, SDL_MapRGB(loadIMG->format, 0, 255, 0));
+	SDL_SetColorKey(loadIMG, SDL_TRUE, SDL_MapRGB(loadIMG->format, 0, 255, 0));	// xoa mau nen trong file nguon duoc load
 	texture = SDL_CreateTextureFromSurface(renderer, loadIMG);
 
 	if (texture == NULL)
 	{
-		cerr << "Can't create texture while load image! " << SDL_GetError() << endl;
+		cerr << "Can't create texture from surface! " << SDL_GetError() << endl;
 		return ;
 	}
-	SDL_FreeSurface(loadIMG);
+	SDL_FreeSurface(loadIMG);	// xoa surface
 
-	//set img resource
-	set();
+	set();	// dat vi tri cua cac khung hinh trong anh nguon
 }

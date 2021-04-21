@@ -9,13 +9,13 @@ Block::Block()
 	w = h = GRID;
 }
 
-Block::Block(int x, int y)
+Block::Block(int _x, int _y)
 {
 	Dir = Direction::right;
 	isCorner = false;
-	this->x = x;
-	this->y = y;
-	this->w = this->h = GRID;
+	x = _x;
+	y = _y;
+	w = h = GRID;
 }
 
 Block::Block(const Block& src)
@@ -80,11 +80,12 @@ void Block::erase(SDL_Renderer* renderer, SDL_Color color)
 	SDL_RenderFillRect(renderer, this);
 }
 
-void Block::erase(SDL_Renderer* renderer, SDL_Color color[])
+void Block::erase(SDL_Renderer* renderer, SDL_Color grassColor[])
 {
+	// xoa de hai mau co so le nhau tren ground
 	if ((this->x + this->y) / GRID % 2)
-		erase(renderer, color[0]);
-	else erase(renderer, color[1]);
+		erase(renderer, grassColor[0]);
+	else erase(renderer, grassColor[1]);
 }
 
 bool Block::operator==(Block _b)

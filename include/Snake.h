@@ -12,7 +12,7 @@ class Snake : public vector<Block>
 	Block* temp;
 	bool is_Suitable(Block newBlock);
 
-	vector<SDL_Rect> src;	//get resource from assets image
+	vector<SDL_Rect> src;	// luu vi tri cac phan cua snake 
 public:
 	bool alive;
 	bool isEatFood;
@@ -20,6 +20,8 @@ public:
 	int length;
 	Snake();
 	Snake(int length, vector<SDL_Rect> src);
+	~Snake();
+	// ve va xoa snake voi mau grass
 	void paint(SDL_Renderer* renderer, SDL_Texture* texture, SDL_Color grassColor[]);
 	void move();
 };

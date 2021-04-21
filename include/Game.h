@@ -1,5 +1,5 @@
 #pragma once
-#include <map>
+
 #include <iostream>
 #include "Snake.h"
 #include "Assets.h"
@@ -10,17 +10,20 @@
 #include "Button.h"
 
 using namespace std;
-// enum sounds type
-enum class Type {up, down, left, right, eat1, eat2, die};
-const int TOTAL_BUTTONS = 3;
+// liet ke cac loai sounds
+const int TOTAL_SOUNDS = 7;
+enum Type {CHANGE_DIRECTION_UP, CHANGE_DIRECTION_DOWN, CHANGE_DIRECTION_LEFT, CHANGE_DIRECION_RIGHT, SNAKE_EAT_1, SNAKE_EAT_2, SNAKE_DIE};
 
+const int TOTAL_BUTTONS = 3;
 enum ButtonSprite {HOME, QUIT, RESTART};
 
 class Game
 {
 	SDL_Window* window;
 
+	//xu li su kien ban phim de xac dinh huong cua snake
 	void pollEvent(SDL_Event& event);
+	//cap nhat game sau moi khung hinh
 	void update();
 
 	Snake snake;
@@ -28,35 +31,44 @@ class Game
 	Food food;
 	Ground ground;
 	Text text;
-	map<Type, Media> sounds;
+	Media sounds[TOTAL_SOUNDS];
 	Button button[TOTAL_BUTTONS];
 
 	bool firstRun;
 	int score;
 	int highestScore;
+	
 	void init();
-	int getHighestScore();
-	void saveHighestScore();
-	void Pause();
-	void unPause();
-	void paint();
-	void displayInformation();
 	void soundsInit();
 	void buttonInit();
 
-	// clear screen with opacity
+	// lay highest score tu file
+	int getHighestScore();
+	//luu highest score vao file
+	void saveHighestScore();
+
+	void Pause();
+	void unPause();
+	// ve len man hinh
+	void paint();
+	// hien thi cac thong tin nhu diem so, huong dan
+	void displayInformation();
+	// man hinh truoc khi vao game
+	void home();
+
+	// xoa man hinh voi do mo va mau nen mac dinh
 	void clrscr(int opacity);
 
 	void clear();
 	void loop();
 	
 	const int FPS = 60;
-	int frameDelay = 8000 / FPS;
+	int frameDelay = 8000 / FPS; // delay cua moi khung hinh
+	// trang thai cua game
 	bool running;
 	bool isPause;
 public:
 	SDL_Renderer* renderer;
-
 	Game();
 	void play();
 	~Game();
