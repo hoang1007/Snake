@@ -25,6 +25,7 @@ Block::Block(const Block& src)
 	w = src.w;
 	h = src.h;
 	Dir = src.Dir;
+	isCorner = false;
 }
 
 void Block::paint(SDL_Renderer* renderer, SDL_Texture* texture, SDL_Rect src)
