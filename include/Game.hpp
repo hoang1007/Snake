@@ -45,6 +45,7 @@ public:
 	SDL_Renderer* renderer;
 
 	Game();
+	void init();
 	void loop();
 	void play();
 	~Game();

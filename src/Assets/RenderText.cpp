@@ -7,6 +7,8 @@ Text::Text()
 {
     font = NULL;
     texture = NULL;
+    colorText = {255, 255, 255, 255};
+    w = h = 0;
 }
 
 Text::Text(const string fontPath, const int fontSize)
@@ -20,30 +22,51 @@ Text::Text(const string fontPath, const int fontSize)
 
     if (font == NULL)
         cerr << "Faild to load font! " << TTF_GetError() << endl;
+    colorText = {255, 255, 255, 255};
+    w = h = 0;
 }
 
-void Text::display(SDL_Renderer* renderer, string text, int x, int y, SDL_Color textColor)
+void Text::loadText(SDL_Renderer* renderer, string text)
 {
-    SDL_Surface* textSurface = TTF_RenderText_Solid(font, text.c_str(), textColor);
+    SDL_Surface* textSurface = TTF_RenderText_Solid(font, text.c_str(), colorText);
 
     if (textSurface == NULL)
-        cerr << "Unable to render text surface! " << TTF_GetError() << endl;
+        cerr << "Unable to render text surface! " << TTF_GetError << endl;
     else
     {
         texture = SDL_CreateTextureFromSurface(renderer, textSurface);
 
         if (texture == NULL)
-            cerr << "Unable to create texture from render text! " << TTF_GetError() << endl;
-        
-        SDL_Rect dst = {x, y, SCREEN_WIDTH - x, textSurface->h};
-
-        //get rid of old render text
-        SDL_SetRenderDrawColor(renderer, R_BACKGROUND, G_BACKGROUND, B_BACKGROUND, 255);
-        SDL_RenderFillRect(renderer, &dst);
-
-        dst.w = textSurface->w;
-        dst.x = (WALL_WIDTH + WALL_X + SCREEN_WIDTH - dst.w) / 2;
-        SDL_RenderCopy(renderer, texture, NULL, &dst);
+            cerr << "Unable to create texture from render text! " << TTF_GetError << endl;
+        else
+        {
+            w = textSurface->w;
+            h = textSurface->h;
+        }
     }
     SDL_FreeSurface(textSurface);
+}
+
+void Text::render(SDL_Renderer* renderer, int x, int y)
+{
+    SDL_Rect dst = {x, y, w, h};
+    SDL_SetRenderDrawColor(renderer, R_BACKGROUND, G_BACKGROUND, B_BACKGROUND, 255);
+    SDL_RenderFillRect(renderer, &dst);
+
+    SDL_RenderCopy(renderer, texture, NULL, &dst);
+}
+
+void Text::setColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a)
+{
+    colorText = {r, g, b, a};
+}
+
+int Text::getHeight()
+{
+    return h;
+}
+
+int Text::getWidth()
+{
+    return w;
 }

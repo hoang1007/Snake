@@ -2,6 +2,7 @@
 
 int main(int argc, char *argv[])
 {
-	Game snake;
-	snake.loop();
+	Game game;
+	game.init();
+	game.loop();
 }

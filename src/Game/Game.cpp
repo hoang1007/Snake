@@ -63,28 +63,48 @@ void Game::saveHighestScore()
 	}
 }
 
+int Center(int a, int b, int w)
+{
+	return (a + b - w) / 2;
+}
 void Game::displayInformation()
 {
 	// display score
 	const SDL_Color scoreColor = {255, 31, 31, 255},
 					highestScoreColor = {51, 25, 0, 255};
-	//set width and height enough to erase old render text
-	int score_x = WALL_WIDTH + WALL_X + GRID,
-		score_y = WALL_Y + GRID;
-	text.display(renderer, "SCORE: " + to_string(score), score_x, score_y, scoreColor);
 
-	int highestScore_x = score_x,
-		highestScore_y = score_y + 2 * GRID;
-	text.display(renderer, "Highest Score: " + to_string(highestScore), highestScore_x, highestScore_y, highestScoreColor);
-
-
-	//display pause game tutorial
-	SDL_Color pauseColor = {255, 255, 51};
 	
-	int x = WALL_X + GRID + WALL_WIDTH;
-	int y = SCREEN_HEIGHT / 2;
+	text.setColor(255, 31, 31, 255);
+	text.loadText(renderer, "SCORE: " + to_string(score));
+	//can giua 
+	int score_x = Center(WALL_X + WALL_WIDTH, SCREEN_WIDTH, text.getWidth()),
+		score_y = WALL_Y + GRID;
 
-	text.display(renderer, "press p to pause!", x, y, pauseColor);
+	// xoa text score cu
+	SDL_Rect oldText = {WALL_X + WALL_WIDTH + GRID, score_y, SCREEN_WIDTH - WALL_X - WALL_WIDTH, text.getHeight()};
+	SDL_SetRenderDrawColor(renderer, R_BACKGROUND, G_BACKGROUND, B_BACKGROUND, 255);
+	SDL_RenderFillRect(renderer, &oldText);
+
+	text.render(renderer, score_x, score_y);	
+
+	// ve highest score text
+	text.setColor(51, 25, 0, 255);
+	text.loadText(renderer, "Highest Score: " + to_string(highestScore));
+
+	//can giua
+	int highestScore_x = Center(WALL_X + WALL_WIDTH, SCREEN_WIDTH, text.getWidth()),
+		highestScore_y = score_y + 2 * GRID;
+
+	text.render(renderer, highestScore_x, highestScore_y);
+
+	// //display pause game tutorial
+
+	text.setColor(255, 255, 51, 255);
+	text.loadText(renderer, "press p to pause!");
+	int pauseTutorialText_x = Center(WALL_X + WALL_WIDTH, SCREEN_WIDTH, text.getWidth()),
+		pauseTutorialText_y = SCREEN_HEIGHT / 2;
+
+	text.render(renderer, pauseTutorialText_x, pauseTutorialText_y);
 }
 
 void Game::Pause()

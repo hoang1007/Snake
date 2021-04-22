@@ -19,7 +19,29 @@ Game::Game()
 			if (renderer == NULL)
 				 cerr << "Can't create renderer" <<  endl;
 		}
-		//init stat 
+	}
+}
+
+void Game::soundsInit()
+{
+	sounds[CHANGE_DIRECTION_UP] = Media("sounds/up.wav");
+
+	sounds[CHANGE_DIRECTION_DOWN] = Media("sounds/down.wav");
+
+	sounds[CHANGE_DIRECTION_LEFT] = Media("sounds/left.wav");
+
+	sounds[CHANGE_DIRECTION_RIGHT] = Media("sounds/right.wav");
+
+	sounds[SNAKE_EAT_1] = Media("sounds/eat1.wav");
+
+	sounds[SNAKE_EAT_2] = Media("sounds/eat2.wav");
+
+	sounds[SNAKE_DIE] = Media("sounds/die.wav");
+}
+
+void Game::init()
+{
+	//init stat 
 
 		assets = Assets();
 		assets.load("assets.png", renderer);
@@ -40,24 +62,6 @@ Game::Game()
 
 		score = 0;
 		highestScore = getHighestScore();	//get highest score from file
-	}
-}
-
-void Game::soundsInit()
-{
-	sounds[CHANGE_DIRECTION_UP] = Media("sounds/up.wav");
-
-	sounds[CHANGE_DIRECTION_DOWN] = Media("sounds/down.wav");
-
-	sounds[CHANGE_DIRECTION_LEFT] = Media("sounds/left.wav");
-
-	sounds[CHANGE_DIRECTION_RIGHT] = Media("sounds/right.wav");
-
-	sounds[SNAKE_EAT_1] = Media("sounds/eat1.wav");
-
-	sounds[SNAKE_EAT_2] = Media("sounds/eat2.wav");
-
-	sounds[SNAKE_DIE] = Media("sounds/die.wav");
 }
 
 void Game::paint()
