@@ -92,18 +92,12 @@ void Game::Pause()
 	isPause = true;
 	//delay when open menu
 	SDL_Delay(100);
-	SDL_Rect p = {0, 0, 500, 500};
-	SDL_SetRenderDrawColor(renderer, R_BACKGROUND, G_BACKGROUND, B_BACKGROUND, 255);
-	SDL_RenderFillRect(renderer, &p);
-	SDL_RenderPresent(renderer);
 }
 
 void Game::unPause()
 {
 	SDL_Delay(100);
 	isPause = false;
-
-	paint();
 }
 
 void Game::update()
