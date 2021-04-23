@@ -111,6 +111,7 @@ void Game::Pause()
 {
 	isPause = true;
 	//delay when open menu
+	SDL_Rect screen = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
 	SDL_Delay(100);
 }
 

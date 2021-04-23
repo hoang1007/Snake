@@ -15,9 +15,9 @@ Game::Game()
 		else
 		{
 			renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-			
 			if (renderer == NULL)
 				 cerr << "Can't create renderer" <<  endl;
+			else SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 		}
 	}
 }
