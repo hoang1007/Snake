@@ -32,18 +32,18 @@ Snake::Snake(int length)
 void Snake::paint(SDL_Renderer* renderer, SDL_Texture* texture, SDL_Color grassColor[])
 {
 	// vẽ thân của rắn
-	Node<Block>* i = end()->prev, * prevNode = end();
-	while (i != begin())
+	ReverseQueue<Block>::Node* iter = node_end()->prev, * prev_iter = node_end();
+	while (iter != node_begin())
 	{
-		if (i->data.isCorner)
+		if (iter->data.isCorner)
 		{
-			i->data.erase(renderer, grassColor);
-			i->data.paint(renderer, texture, src[CORNER], prevNode->data.Dir - i->data.Dir);
+			iter->data.erase(renderer, grassColor);
+			iter->data.paint(renderer, texture, src[CORNER], prev_iter->data.Dir - iter->data.Dir);
 		}
-		else 
-			i->data.paint(renderer, texture, src[BODY]);
-		prevNode = i;
-		i = i->prev;
+		else iter->data.paint(renderer, texture, src[BODY]);
+
+		prev_iter = iter;
+		iter = iter->prev;
 	}
 
 	// xóa phần thừa ở đuôi của rắn
@@ -73,7 +73,7 @@ Direction Snake::changeDir()
 
 void Snake::move()
 {
-	front().Dir = changeDir();
+	front().Dir = changeDir();	// cập nhật hướng mới
 	
 	Block newBlock(front());
 	switch (front().Dir)

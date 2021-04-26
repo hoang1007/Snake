@@ -1,32 +1,52 @@
+﻿/*
+* Cấu trúc dữ liệu hàng đợi 
+* Sử dụng danh sách liên kết ngược để thêm vào đầu và bỏ đi phần tử cuối chỉ mất O(1)
+*/
 #pragma once 
 
-template <class Type>
-struct Node
-{
-    Type data;
-    Node* prev;
-    Node();
-    Node(Type value);
-};
+#include <iostream>
+using namespace std;
 
 template <typename Type>
 class ReverseQueue
 {
-    Node<Type>* head, * tail;
-    int _size;
+protected:
+    // định nghĩa cấu trúc node là mỗi mắt xích của danh sách liên kết
+    struct Node
+    {
+        Type data;
+        Node* prev;
+        Node();
+        Node(Type value);
+    };
+private:
+    Node* head; // lưu node đầu của hàng đợi
+    Node* tail; // lưu node cuối của hàng đợi
+    int _size;  // chiều dài của hàng đợi
 public:
     ReverseQueue();
     ~ReverseQueue();
-    Node<Type>* begin();
-    Node<Type>* end();
+
+    inline Node* node_begin() { return head; }
+    inline Node* node_end() { return tail; }
+
+    // thêm một node vào đầu hàng đợi
     void push(Type value);
+    // xóa một node ở cuối hàng đợi và trả về giá trị của nó
     Type pop();
+    // lấy giá trị của một node ở vị trí cho trước (position)
     Type at(int position);
+    // lấy giá trị của một node ở vị trí cho trước (position)
     Type operator[] (int position);
+    // tìm kiếm trong hàng đợi
     bool find(Type src);
+    // trả về giá trị của node đầu tiên trong hàng đợi
     Type& front();
+    // trả về giá trị của node cuối cùng trong hàng đợi
     Type& back();
+    // xóa tất cả các node của hàng đợi
     void clear();
+    // trả về chiều dài của hàng đợi
     int size();
 
 
@@ -43,35 +63,61 @@ public:
     //    return iterator(tail);
     //}
 
-    //class iterator
+    //iterator secondlast()
     //{
-    //    const Node* currentNode;
-    //public:
-    //    iterator() : currentNode
-    //};
+    //    return iterator(tail->prev);
+    //}
+
+    /*class iterator
+    {
+        Node* currentNode;
+    public:
+        iterator()
+        {
+            currentNode = tail;
+        };
+        iterator(const Node* &node)
+        {
+            currentNode = node;
+        };
+
+        iterator& operator=(Node* node)
+        {
+            this->currentNode = node;
+            return *this;
+        }
+        iterator& operator--()
+        {
+            if (currentNode)
+                currentNode = currentNode->prev;
+            return *this;
+        }
+        iterator operator--(int)
+        {
+            iterator i = *this;
+            --* this;
+            return i;
+        }
+        bool operator!=(const iterator& src)
+        {
+            return currentNode != src.currentNode;
+        }
+        Type* operator*()
+        {
+            return currentNode->data;
+        }
+        Type* operator->()
+        {
+            return &currentNode->data;
+        }
+    };*/
 };
-
-#include <iostream>
-using namespace std;
-
-template <class Type>
-Node<Type>::Node(Type value)
-{
-    data = value;
-    prev = NULL;
-}
-
-template <class Type>
-Node<Type>::Node()
-{
-    prev = nullptr;
-}
 
 template <class Type>
 void ReverseQueue<Type>::push(Type value)
 {
-    Node<Type>* node = new Node<Type>(value);
-
+    Node* node = new Node(value);
+    // nếu hàng đợi rỗng gán cả head và tail bằng node
     if (head == NULL)
         tail = node;
     else
@@ -87,10 +133,10 @@ Type ReverseQueue<Type>::pop()
     if (tail)
     {
         _size--;
-        Node<Type>* temp = tail;
-        tail = tail->prev;
+        Node* temp = tail;
+        tail = tail->prev;  // dịch tail lên một node
 
-        Type temp_data = temp->data;
+        Type temp_data = temp->data;    // lưu lại giá trị của node cần xóa
         temp = NULL;
         delete temp;
         return temp_data;
@@ -104,8 +150,8 @@ Type ReverseQueue<Type>::at(int position)
     {
         if (position == 0) return head->data;
 
-        Node<Type>* temp = tail;
-        position = _size - position - 1;
+        Node* temp = tail;
+        position = _size - position - 1;    // fix lại vị trí vì duyệt hàng đợi từ cuối lên đầu
 
         for (; position; position--)
             temp = temp->prev;
@@ -125,7 +171,7 @@ Type ReverseQueue<Type>::operator[](int position)
 template <class Type>
 bool ReverseQueue<Type>::find(Type src)
 {
-    Node<Type>* temp = tail;
+    Node* temp = tail;
     if (tail == NULL) return false;
     for (; temp; temp = temp->prev)
         if (temp->data == src) return true;
@@ -136,20 +182,20 @@ template <class Type>
 Type& ReverseQueue<Type>::front()
 {
     if (head == NULL) cerr << "Head is NULL\n";
-    else return head->data;
+    return head->data;
 }
 
 template <class Type>
 Type& ReverseQueue<Type>::back()
 {
     if (tail == NULL) cerr << "Tail is NULL\n";
-    else return tail->data;
+    return tail->data;
 }
 
 template <class Type>
 void ReverseQueue<Type>::clear()
 {
-    while (tail)
+    while (tail)    // khi hàng đợi không rỗng thì tiếp tục pop
         pop();
 }
 
@@ -173,13 +219,14 @@ ReverseQueue<Type>::~ReverseQueue()
 }
 
 template<typename Type>
-inline Node<Type>* ReverseQueue<Type>::begin()
+inline ReverseQueue<Type>::Node::Node()
 {
-    return head;
+    prev = nullptr;
 }
 
 template<typename Type>
-inline Node<Type>* ReverseQueue<Type>::end()
+inline ReverseQueue<Type>::Node::Node(Type value)
 {
-    return tail;
+    this->data = value;
+    prev = nullptr;
 }
