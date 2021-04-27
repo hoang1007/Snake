@@ -32,18 +32,16 @@ Snake::Snake(int length)
 void Snake::paint(SDL_Renderer* renderer, SDL_Texture* texture, SDL_Color grassColor[])
 {
 	// vẽ thân của rắn
-	ReverseQueue<Block>::Node* iter = node_end()->prev, * prev_iter = node_end();
-	while (iter != node_begin())
-	{
-		if (iter->data.isCorner)
-		{
-			iter->data.erase(renderer, grassColor);
-			iter->data.paint(renderer, texture, src[CORNER], prev_iter->data.Dir - iter->data.Dir);
-		}
-		else iter->data.paint(renderer, texture, src[BODY]);
+	ReverseQueue<Block>::iterator iter, prev_iter = end();
 
-		prev_iter = iter;
-		iter = iter->prev;
+	for (iter = secondlast(); iter != begin(); iter--, prev_iter--)
+	{
+		if (iter->isCorner)
+		{
+			iter->erase(renderer, grassColor);
+			iter->paint(renderer, texture, src[CORNER], prev_iter->Dir - iter->Dir);
+		}
+		else iter->paint(renderer, texture, src[BODY]);
 	}
 
 	// xóa phần thừa ở đuôi của rắn

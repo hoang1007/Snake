@@ -27,9 +27,6 @@ public:
     ReverseQueue();
     ~ReverseQueue();
 
-    inline Node* node_begin() { return head; }
-    inline Node* node_end() { return tail; }
-
     // thêm một node vào đầu hàng đợi
     void push(Type value);
     // xóa một node ở cuối hàng đợi và trả về giá trị của nó
@@ -49,34 +46,33 @@ public:
     // trả về chiều dài của hàng đợi
     int size();
 
+    // duyệt hàng đợi và truy cập dữ liệu
+    class iterator;
 
-    //// iterator
-    //class iterator;
+    iterator begin()
+    {
+        return iterator(head);
+    }
 
-    //iterator begin()
-    //{
-    //    return iterator(head);
-    //}
+    iterator end()
+    {
+        return iterator(tail);
+    }
 
-    //iterator end()
-    //{
-    //    return iterator(tail);
-    //}
+    iterator secondlast()
+    {
+        return iterator(tail->prev);
+    }
 
-    //iterator secondlast()
-    //{
-    //    return iterator(tail->prev);
-    //}
-
-    /*class iterator
+    class iterator
     {
         Node* currentNode;
     public:
         iterator()
         {
-            currentNode = tail;
+            currentNode = nullptr;
         };
-        iterator(const Node* &node)
+        iterator(Node* &node)
         {
             currentNode = node;
         };
@@ -102,7 +98,7 @@ public:
         {
             return currentNode != src.currentNode;
         }
-        Type* operator*()
+        Type& operator*()
         {
             return currentNode->data;
         }
@@ -110,7 +106,7 @@ public:
         {
             return &currentNode->data;
         }
-    };*/
+    };
 };
 
 template <class Type>
