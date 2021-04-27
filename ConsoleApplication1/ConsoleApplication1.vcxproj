@@ -32,9 +32,6 @@
     <ClInclude Include="Snake.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="assets.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Font Include="font.ttf" />
   </ItemGroup>
   <ItemGroup>
@@ -52,6 +49,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="highestScore" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="assets.png" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

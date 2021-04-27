@@ -28,6 +28,7 @@ public:
 	vector<SDL_Rect> src;	//lưu lại vị trí, kích thước của các bộ phận rắn từ file nguồn
 	Snake();
 	Snake(int length);
+	~Snake();
 	/*
 	* Vẽ rắn với grassColor dùng để vẽ lại bản đồ với màu cỏ so le nhau
 	*/

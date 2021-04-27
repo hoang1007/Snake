@@ -7,6 +7,7 @@
 #include "Ground.hpp"
 #include "RenderText.hpp"
 #include "MediaPlayer.hpp"
+#include "Button.hpp"
 
 using namespace std;
 // liệt kê các loại âm thanh
@@ -31,6 +32,7 @@ class Game
 	Ground ground;
 	Text text[TOTALS_TEXT];
 	Media sounds[TOTAL_SOUNDS];
+	Button restartButton;
 
 	int score;
 	int highestScore;
@@ -38,6 +40,7 @@ class Game
 	int getHighestScore();
 	// lưu điểm cao nhất vào file
 	void saveHighestScore();
+	void restart();
 	void Pause();
 	void unPause();
 	void paint();

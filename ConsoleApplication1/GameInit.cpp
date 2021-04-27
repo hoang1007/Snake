@@ -65,6 +65,7 @@ void Game::resourceInit()
 	const int SIZE = assets.getWidth() / 4;
 	food.resource = { SIZE, SIZE, SIZE, SIZE };
 	ground.rockSrc = { 2 * SIZE, SIZE, SIZE, SIZE };
+	restartButton.resource = { 3 * SIZE, SIZE, SIZE, SIZE };
 
 	snake.src[HEAD] = { 0, 0, SIZE, SIZE };
 	snake.src[TAIL] = { SIZE, 0, SIZE, SIZE };
@@ -86,6 +87,8 @@ void Game::init()
 	ground = Ground();
 
 	food = Food();
+
+	restartButton = Button();
 
 	soundsInit();
 	resourceInit();
@@ -114,6 +117,7 @@ void Game::paint()
 
 Game::~Game()
 {
+	cerr << "Game destructor called!" << endl;
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	SDL_Quit();

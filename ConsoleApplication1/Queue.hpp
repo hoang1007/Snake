@@ -211,6 +211,7 @@ ReverseQueue<Type>::ReverseQueue()
 template <class Type>
 ReverseQueue<Type>::~ReverseQueue()
 {
+    cerr << "Queue destructor called!" << endl;
     clear();
 }
 

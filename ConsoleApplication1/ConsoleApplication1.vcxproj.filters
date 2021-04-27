@@ -50,11 +50,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="assets.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-  </ItemGroup>
-  <ItemGroup>
     <Font Include="font.ttf">
       <Filter>Resource Files</Filter>
     </Font>
@@ -98,5 +93,10 @@
     <None Include="highestScore">
       <Filter>Resource Files</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="assets.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

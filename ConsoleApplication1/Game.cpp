@@ -163,14 +163,13 @@ void Game::update()
 void Game::loop()
 {
 	Uint32 frameStart, frameTime;	// đếm thời gian để chạy một khung hình từ đó tính ra thời gian trễ của mỗi khung hình
-	
 	paint();
+
 	while (true)
 	{
 		frameStart = SDL_GetTicks();
 
 		pollEvent();
-		
 		if (!isPause && snake.alive)	update();	// nếu không dừng thì tiếp tục game
 	
 		// thời gian chạy một khung hình
@@ -179,35 +178,13 @@ void Game::loop()
 		if (frameDelay > frameTime) 
 			SDL_Delay(frameDelay - frameTime);
 
-		// hiển thị thông báo và điểm chơi được khi thua
 		if (!snake.alive)
-		{
-			SDL_Delay(150);
-			clrscr(150);
-			// hiển thị thông báo thua 
-			text[LOSE].loadText(renderer, "YOU LOSE!!!");
-
-			int lose_x = Center(0, SCREEN_WIDTH, text[LOSE].getWidth()),
-				lose_y = Center(0, SCREEN_HEIGHT, text[LOSE].getHeight());
-			text[LOSE].render(renderer, lose_x, lose_y);
-
-			// hiển thị điểm
-			text[SCORE].loadText(renderer, "YOUR SCORE: " + to_string(score));
-			int score_x = Center(0, SCREEN_WIDTH, text[SCORE].getWidth()),
-				score_y = 2 * SCREEN_HEIGHT / 3;
-			text[SCORE].render(renderer, score_x, score_y);
-			SDL_RenderPresent(renderer);
-			SDL_Event e;
-			while (SDL_WaitEvent(&e))
-				if (e.type == SDL_QUIT)
-				{
-					running = false;
-					break;
-				}
-		}
-		if (!running) break;
+			break;
+		if (!running) return;
 	}
+	
 	saveHighestScore();
+	restart();
 }
 
 void Game::clrscr(int opacity)
@@ -215,4 +192,59 @@ void Game::clrscr(int opacity)
 	SDL_Rect screen = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
 	SDL_SetRenderDrawColor(renderer, R_BACKGROUND, G_BACKGROUND, B_BACKGROUND, opacity);
 	SDL_RenderFillRect(renderer, &screen);
+}
+
+void Game::restart()
+{
+	SDL_Delay(150);
+	clrscr(150);
+	// hiển thị thông báo thua 
+	text[LOSE].loadText(renderer, "YOU LOSE!!!");
+
+	// căn giữa cho text 
+	int lose_x = Center(0, SCREEN_WIDTH, text[LOSE].getWidth()),
+		lose_y = SCREEN_HEIGHT / 4;
+	text[LOSE].render(renderer, lose_x, lose_y);
+
+	// hiển thị điểm
+	text[SCORE].loadText(renderer, "YOUR SCORE: " + to_string(score));
+
+	//căn giữa 
+	int score_x = Center(0, SCREEN_WIDTH, text[SCORE].getWidth()),
+		score_y = SCREEN_HEIGHT / 2;
+	text[SCORE].render(renderer, score_x, score_y);
+
+	// hiển thị nút chơi lại
+	//căn giữa
+	int button_x = Center(0, SCREEN_WIDTH, restartButton.getWidth()),
+		button_y = SCREEN_HEIGHT / 2;
+
+	restartButton.setCoordinate(button_x, button_y);
+	restartButton.resize(200, 200, true);	// chỉnh kích thước của nút lên 200 * 200
+
+	restartButton.paint(renderer, assets.texture);
+
+	SDL_RenderPresent(renderer);
+
+	SDL_Event e;
+	while (SDL_WaitEvent(&e))
+		if (e.type == SDL_QUIT)
+		{
+			running = false;
+			return;
+		}
+		else if (e.type == SDL_MOUSEBUTTONDOWN)
+		{
+			int x, y;
+			SDL_GetMouseState(&x, &y);
+
+			if (restartButton.isClicked(x, y))
+			{
+				SDL_Delay(200);
+				restartButton.erase();
+				init();
+				loop();
+				return;
+			}
+		}
 }

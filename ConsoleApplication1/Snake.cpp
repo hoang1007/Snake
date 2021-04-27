@@ -110,3 +110,11 @@ bool Snake::isSuitable(Block newBlock)
 		return false;
 	return true;
 }
+
+Snake::~Snake()
+{
+	cerr << "Snake destructor called!" << endl;
+	src.clear();
+	delete temp;
+	clear();
+}
