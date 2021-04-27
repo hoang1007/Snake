@@ -1,7 +1,6 @@
 # Game Snake
 ## Em tự đánh giá game của em nhận được 9 điểm
 
-## Game của em:
 
 * Sử dụng nhiều class, tách file, kế thừa
 * Code snake sử dụng class template hàng đợi được viết bằng danh sách liên kết
