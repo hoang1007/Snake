@@ -9,4 +9,5 @@
 * Sử dụng nạp chồng toán tử
 * Tự thiết kế tài nguyên game
 * Tự thiết kế âm thanh di chuyển từ [https://musiclab.chromeexperiments.com/]
+* Tham khảo cách cài đặt iterator từ [https://www.geeksforgeeks.org/implementing-iterator-pattern-of-a-single-linked-list/
 * Có thể lưu lại điểm cao nhất sau mỗi lần chơi
