@@ -1,9 +1,9 @@
 # Game Snake
 ## Em tự đánh giá game của em nhận được 9 điểm
 
-## Game của em có những ưu điểm
+## Game của em:
 
-* Sử dụng nhiều class bằng cách kế thừa
+* Sử dụng nhiều class, tách file, kế thừa
 * Code snake sử dụng class template hàng đợi được viết bằng danh sách liên kết
 * Vẽ đầu, đuôi theo hướng đi của rắn, bo góc rắn khi chuyển hướng
 * Sử dụng nạp chồng toán tử
