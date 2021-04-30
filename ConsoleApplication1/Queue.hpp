@@ -45,13 +45,19 @@ public:
     void clear();
     // trả về chiều dài của hàng đợi
     int size();
-
+    // trả về true nếu hàng đợi rỗng 
+    bool empty();
     // duyệt hàng đợi và truy cập dữ liệu
     class iterator;
 
     iterator begin()
     {
         return iterator(head);
+    }
+
+    iterator rbegin()
+    {
+        return iterator(nullptr);
     }
 
     iterator end()
@@ -72,7 +78,7 @@ public:
         {
             currentNode = nullptr;
         };
-        iterator(Node* &node)
+        iterator(Node* node)
         {
             currentNode = node;
         };
@@ -126,9 +132,18 @@ void ReverseQueue<Type>::push(Type value)
 template <class Type>
 Type ReverseQueue<Type>::pop()
 {
-    if (tail)
+    if (head)
     {
         _size--;
+        if (head == tail)
+        {
+            Type temp_data = tail->data;
+            head = tail = nullptr;
+            delete head;
+            delete tail;
+            return temp_data;
+        }
+
         Node* temp = tail;
         tail = tail->prev;  // dịch tail lên một node
 
@@ -226,4 +241,10 @@ inline ReverseQueue<Type>::Node::Node(Type value)
 {
     this->data = value;
     prev = nullptr;
+}
+
+template<typename Type>
+bool ReverseQueue<Type>::empty()
+{
+    return _size == 0;
 }

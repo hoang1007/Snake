@@ -55,7 +55,7 @@ class Game
 	// xóa màn hình với độ mờ cho trước (opacity)
 	void clrscr(int opacity);
 	const int FPS = 60;
-	int frameDelay = 8000 / FPS;	//độ trễ của mỗi khung hình
+	int frameDelay;	//độ trễ của mỗi khung hình
 
 	bool running;
 	bool isPause;

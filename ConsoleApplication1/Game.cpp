@@ -164,7 +164,6 @@ void Game::loop()
 {
 	Uint32 frameStart, frameTime;	// đếm thời gian để chạy một khung hình từ đó tính ra thời gian trễ của mỗi khung hình
 	paint();
-
 	while (true)
 	{
 		frameStart = SDL_GetTicks();
@@ -240,7 +239,7 @@ void Game::restart()
 
 			if (restartButton.isClicked(x, y))
 			{
-				SDL_Delay(200);
+				SDL_Delay(100);
 				restartButton.erase();
 				init();
 				loop();

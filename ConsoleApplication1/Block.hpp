@@ -33,4 +33,11 @@ struct Block : public SDL_Rect
 	void erase(SDL_Renderer* renderer, SDL_Color color[]);
 	// toán tử so sánh tọa độ, kích thước của các Block
 	bool operator == (Block _b);
+
+	// đặt tọa độ của block 
+	void setCoordinate(int _x, int _y)
+	{
+		x = _x;
+		y = _y;
+	}
 };

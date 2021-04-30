@@ -34,4 +34,5 @@ public:
 	*/
 	void paint(SDL_Renderer* renderer, SDL_Texture* texture, SDL_Color grassColor[]);
 	void move();
+	Direction autoMove(Block food);
 };
