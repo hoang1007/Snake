@@ -20,13 +20,14 @@ Snake::Snake(int length)
 	alive = true;
 	nextDir = RIGHT;
 	src.resize(TOTALS_PARTS);
-
+	int mid = (WALL_WIDTH / 2) * GRID;
 	for (int i = 0; i < length; i++)
 	{
-		Block newBlock(WALL_WIDTH / 2 + i * GRID, WALL_HEIGHT / 2);
+		Block newBlock( WALL_X + GRID + i * GRID, WALL_Y + GRID);
 		push(newBlock);
 	}
 	temp = NULL;
+	cerr << front().x << " " << front().y << endl;
 }
 
 void Snake::paint(SDL_Renderer* renderer, SDL_Texture* texture, SDL_Color grassColor[])

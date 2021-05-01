@@ -136,13 +136,14 @@ void Game::unPause()
 
 void Game::update()
 {
+	snake.nextDir = snake.autoMove(food);
 	snake.move();
 	if (!snake.alive)
 		sounds[SNAKE_DIE].play(false);
 
 	if (food == snake.front())	// nếu ăn thức ăn thì cộng điểm
 	{
-		snake.isEatFood = true;
+		//snake.isEatFood = true;
 		sounds[rand() % 2 ? SNAKE_EAT_1 : SNAKE_EAT_2].play(false);	// chơi một trong hai sounds effect
 		score += 10;
 	}
