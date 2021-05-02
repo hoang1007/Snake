@@ -86,19 +86,25 @@ struct TreeCycle
 		for (int i = 0; i < path.size(); i++)
 		{
 			int path_length = 0;
-			Node* temp = path[i];
-			while (temp->data != food)
+			bool sucess = false;
+			while (path[i])
 			{
 				path_length++;
-				temp = temp->parent;
+				if (path[i]->data == food)
+				{
+					sucess = true;
+					break;
+				}
+				path[i] = path[i]->parent;
 			}
-			if (max < path_length)
+
+			if (sucess && max < path_length)
 			{
 				max = path_length;
-				shortest = temp;
+				shortest = path[i];
 			}
 		}
-		//path.clear();
+		path.clear();
 		return shortest;
 	}
 	struct Node
@@ -124,31 +130,6 @@ struct TreeCycle
 	};
 };
 
-void ReturnPath(stack<Direction> path)
-{
-	while (!path.empty())
-	{
-		Direction temp = path.top();
-		path.pop();
-		switch (temp)
-		{
-		case RIGHT:
-			cerr << "right ";
-			break;
-		case DOWN:
-			cerr << "down ";
-			break;
-		case UP:
-			cerr << "up ";
-			break;
-		case LEFT:
-			cerr << "left ";
-			break;
-		default:
-			break;
-		}
-	}
-}
 
 Direction Snake::autoMove(Block _food)
 {
@@ -165,22 +146,25 @@ Direction Snake::autoMove(Block _food)
 		Coordinate food = Coordinate(_food);
 		pathTree.build(pathTree.root, tail.toNum(), SIZE * SIZE - size() - 1);
 		TreeCycle::Node* shortest = pathTree.findShortestPath(food.toNum());
-		while (shortest->parent)
+		if (shortest)
 		{
-			Coordinate src = Coordinate(shortest->parent->data),
-				dst = Coordinate(shortest->data);
+			while (shortest->parent)
+			{
+				Coordinate src = Coordinate(shortest->parent->data),
+					dst = Coordinate(shortest->data);
 
-			if (src.x + 1 == dst.x) path.push(RIGHT);
-			else if (src.x - 1 == dst.x) path.push(LEFT);
-			else if (src.y + 1 == dst.y) path.push(DOWN);
-			else path.push(UP);
-			shortest = shortest->parent;
+				if (src.x + 1 == dst.x) path.push(RIGHT);
+				else if (src.x - 1 == dst.x) path.push(LEFT);
+				else if (src.y + 1 == dst.y) path.push(DOWN);
+				else path.push(UP);
+				shortest = shortest->parent;
+			}
 		}
+		else return nextDir;
 	}
 	
 	if (!path.empty())
 	{
-		ReturnPath(path);
 		Direction dir = path.top();
 		path.pop();
 		return dir;
@@ -190,7 +174,7 @@ Direction Snake::autoMove(Block _food)
 
 void TreeCycle::build(Node*& node, const int& End, const int& path_length)
 {
-	if (path.size() == 4) return;
+	if (path.size() == 30) return;
 	if (node == nullptr) return;
 
 	if (End == node->data)
@@ -249,7 +233,7 @@ void TreeCycle::build(Node*& node, const int& End, const int& path_length)
 	build(node->left_child, End, path_length);
 	neighbor[isLegal.front()].getMapValue() = true;
 
-	if (isLegal.size() == 2)
+	if (isLegal.size() > 1)
 	{
 		node->right_child = new Node(neighbor[isLegal.back()].toNum(), node->depth + 1);
 		node->right_child->parent = node;
