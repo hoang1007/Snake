@@ -98,7 +98,7 @@ struct TreeCycle
 				shortest = temp;
 			}
 		}
-		path.clear();
+		//path.clear();
 		return shortest;
 	}
 	struct Node
@@ -190,7 +190,7 @@ Direction Snake::autoMove(Block _food)
 
 void TreeCycle::build(Node*& node, const int& End, const int& path_length)
 {
-	if (path.size() == 5) return;
+	if (path.size() == 4) return;
 	if (node == nullptr) return;
 
 	if (End == node->data)
