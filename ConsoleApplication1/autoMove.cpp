@@ -1,7 +1,25 @@
-﻿#include "Snake.hpp"
-#include <iostream>
+﻿/*
+* Mỗi khi bắt đầu game hoặc rắn ăn thức ăn ta đi tìm một chu trình khép kín từ đầu tới đuôi của rắn
+* đi qua tất cả các ô vuông trên bản đồ mỗi ô một lần (chu trình Hamilton)
+* 
+* Vì con rắn luôn đi theo chu trình trên nên lúc nào cũng tồn tại ít nhất một con đường sao cho
+* rắn không bao giờ tự đâm vào chính nó trừ khi chiều dài của nó vượt quá số ô vuông trên bản đồ
+* 
+* Sử dụng cây nhị phân vét cạn mọi đường đi có thể để tìm ra chu trình Hamilton 
+* từ đó ta tìm ra con đường ngắn nhất từ đầu rắn tới thức ăn và đi theo nó
+* 
+* Vì độ phức tạp là O(n^2) nên bản đồ chỉ giới hạn ở kích thước 6x6 để không bị time limit 
+*/
 
-const int SIZE = 6;
+
+#include "Snake.hpp"
+#include <iostream>
+#include <stack>
+
+const int SIZE = 6;	// mặc định kích thước bản đồ là 6x6 
+
+// bản đồ mô tả vị trí của rắn để có thể xét va chạm với O(1)
+// với mỗi nước đi của rắn ta cập nhật lại bản đồ (đầu mới thêm là 0 và đuôi xóa đi là 1)
 
 bool map[SIZE][SIZE] = 
 {
@@ -13,57 +31,79 @@ bool map[SIZE][SIZE] =
 	{1, 1, 1, 1, 1, 1},
 };
 
+// Tọa độ trên map với serial là số thứ tự của các ô vuông trên map
+// map trên khi chuyển sang serial
+/*
+* 00 01 02 03 04 05
+* 06 07 08 09 10 11
+* 12 13 14 15 16 17
+* 18 19 20 21 22 23
+* 24 25 26 27 28 29
+* 30 31 32 33 34 35
+*/
+
 struct Coordinate
 {
 	int x, y;
-	Coordinate() { x = y = numCode = 0; }
+	Coordinate() { x = y = serial = 0; }
+	// chuyển tọa độ thành serial 
 	Coordinate(int _x, int _y)
 	{
 		x = _x;
 		y = _y;
-		numCode = x + y * SIZE;
+		serial = x + y * SIZE;
 	}
-	Coordinate(int _numCode)
+	// chuyển serial thành tọa độ
+	Coordinate(int _serial)
 	{
-		numCode = _numCode;
-		x = numCode % SIZE;
-		y = numCode / SIZE;
+		serial = _serial;
+		x = serial % SIZE;
+		y = serial / SIZE;
 	}
+	// nhận tọa độ trên bản đồ thật trên game và chuyển về tọa độ tương ứng với map bool
 	Coordinate(Block pSnake)
 	{
 		x = pSnake.x / GRID - 2;
 		y = pSnake.y / GRID - 2;
-		numCode = x + y * SIZE;
+		serial = x + y * SIZE;
 	}
 
+	// kiểm tra xem tọa độ có phù hợp hay không 
 	bool insideMap()
 	{
 		return x >= 0 && x < SIZE&& y >= 0 && y < SIZE;
 	}
 
+	// trả về serial 
 	int toNum()
 	{
-		return numCode;
+		return serial;
 	}
 
-	bool& getMapValue()
+	// lấy giá trị của map bool 
+	bool& mapValue()
 	{
 		return map[y][x];
 	}
 private:
-	int numCode;
+	int serial;
 };
 
+// Cây nhị phân tìm đường 
 struct TreeCycle
 {
+	// Node của cây
 	struct Node;
+
 	Node* root;
-	vector<Node*> path;
+	ReverseQueue<Node*> destination;	// lưu lại node cuối của mỗi chu trình để truy ra cả chu trình 
+
 	TreeCycle() { root = nullptr; }
 	TreeCycle(int value)
 	{
 		root = new Node(value, 0);
 	}
+	// Thu hồi vùng nhớ khi hoàn thành 
 	void clear(Node* &node)
 	{
 		if (node == nullptr) return;
@@ -72,45 +112,55 @@ struct TreeCycle
 		node = nullptr;
 		delete node;
 	}
+
 	~TreeCycle()
 	{
 		cerr << "Destructor tree" << endl;
 		clear(root);
 	}
+
+	// tìm tất cả các chu trình Hamilton 
 	void build(Node*& node, const int &End, const int &path_length);
+
+	// tìm đường đi xa nhất từ đuôi rắn đến thức ăn
+	// tức là gần nhất từ đầu tới thức ăn 
 	Node* findShortestPath(int food)
 	{
 		Node* shortest = nullptr;
 		int max = 0;
-		cerr << "path size: " << path.size() << endl;
-		for (int i = 0; i < path.size(); i++)
+		cerr << "path size: " << destination.size() << endl;
+		for (ReverseQueue<Node*>::iterator i = destination.end(); i != destination.pbegin(); i--)
 		{
 			int path_length = 0;
-			bool sucess = false;
-			while (path[i])
+			Node* temp = *i;
+			bool meetFood = false;	// trả về true nếu gặp food 
+			// duyệt từ phía cuối chu trình lên đầu
+			// lưu lại số node phải đi và so sánh với các chu trình khác 
+			while (temp)	
 			{
 				path_length++;
-				if (path[i]->data == food)
+				if (temp->data == food)
 				{
-					sucess = true;
+					meetFood = true;
 					break;
 				}
-				path[i] = path[i]->parent;
+				temp = temp->parent;
 			}
 
-			if (sucess && max < path_length)
+			if (meetFood && max < path_length)	// nếu tìm thấy chu trình nào xa hơn thì cập nhật shortest 
 			{
 				max = path_length;
-				shortest = path[i];
+				shortest = temp;
 			}
 		}
-		path.clear();
+		destination.clear();	// xóa tất cả các chu trình cũ để tìm các chu trình mới 
 		return shortest;
 	}
+
 	struct Node
 	{
-		int data;
-		int depth;
+		int data;	// giá trị của node <=> serial trong Coordinate 
+		int depth;	// độ sâu của node 
 		Node* parent;
 		Node* left_child;
 		Node* right_child;
@@ -133,12 +183,18 @@ struct TreeCycle
 
 Direction Snake::autoMove(Block _food)
 {
+	// tọa độ của head và tail trên map bool 
 	Coordinate head = Coordinate(front());
 	Coordinate tail = Coordinate(back());
 
-	map[tail.y][tail.x] = true;
+	// cập nhật vị trí của rắn trên map bool 
+	map[tail.y][tail.x] = true;		
 	map[head.y][head.x] = false;
 	
+	// *** đã được di chuyển đến file Snake.hpp ***
+	// static stack<Direction> path;	// lưu lại hướng đi khi truy ngược chu trình
+	// ********************************************
+
 	if (path.empty())
 	{
 		cerr << "path finding...\n";;
@@ -150,6 +206,8 @@ Direction Snake::autoMove(Block _food)
 		{
 			while (shortest->parent)
 			{
+				// truy ngược node cuối 
+				// từ độ chênh lệch tọa độ giữa node cha và con ta tính ra các hướng đi 
 				Coordinate src = Coordinate(shortest->parent->data),
 					dst = Coordinate(shortest->data);
 
@@ -163,29 +221,33 @@ Direction Snake::autoMove(Block _food)
 		else return nextDir;
 	}
 	
-	if (!path.empty())
+	if (!path.empty())	// mỗi lượt đi trả về các hướng đi 
 	{
 		Direction dir = path.top();
 		path.pop();
 		return dir;
 	}
-	return nextDir;
+	return nextDir;	// nếu có lỗi trả về hướng đi hiện tại 
 }
 
 void TreeCycle::build(Node*& node, const int& End, const int& path_length)
 {
-	if (path.size() == 30) return;
-	if (node == nullptr) return;
+	if (destination.size() == 30) return;	// giới hạn số chu trình tìm được là 30 để tiết kiệm thời gian 
+	if (node == nullptr) return;	
+
+	// vì chu trình đi qua tất cả các ô trên map trừ rắn 
+	// node cuối cùng phải có độ sâu bằng số ô trống trên map 
 
 	if (End == node->data)
 	{
 		if (node->depth == path_length)
-			path.push_back(node);
+			destination.push(node);
 		return;
 	}
 
-	Coordinate node_coor(node->data);
-	//theo chieu up => down => left => right
+	Coordinate node_coor(node->data);	// chuyển node thành tọa độ trên map bool để xét các ô xung quanh 
+
+	// với mỗi node tìm các hướng đi có thể di chuyển 
 	Coordinate neighbor[4];
 
 	neighbor[UP] = Coordinate(node_coor.x, node_coor.y - 1),
@@ -193,15 +255,19 @@ void TreeCycle::build(Node*& node, const int& End, const int& path_length)
 	neighbor[LEFT] = Coordinate(node_coor.x - 1, node_coor.y),
 	neighbor[RIGHT] = Coordinate(node_coor.x + 1, node_coor.y);
 
+	// xét các ô xung quanh nếu ở trong map và có thể đi thì đẩy vào vector isLegal 
 	vector<int> isLegal;
 	for (int i = 0; i < 4; i++)
-		if (neighbor[i].insideMap() && neighbor[i].getMapValue())
+		if (neighbor[i].insideMap() && neighbor[i].mapValue())
 			isLegal.push_back(i);
 
-	if (isLegal.size() == 0) return;
+	if (isLegal.size() == 0) return;	// nếu không có hướng đi nào thì thoát 
+
+	// nếu cả 3 hướng đi đều có thể đi thì loại hướng đi chia map thành 2 nửa 
+	// hoặc hướng đi tiến gần tới điểm cuối cùng nhất để có thể cài đặt cây nhị phân 
 	if (isLegal.size() == 3)
 	{
-		// loại hướng đi mà ngăn cách map
+		// loại hướng đi mà ngăn cách map (sát với tường)
 		int need_erase = INT_MAX;
 		for (int i = 0; i < 3; i++)
 		{
@@ -210,7 +276,7 @@ void TreeCycle::build(Node*& node, const int& End, const int& path_length)
 				need_erase = i;
 		}
 		if (need_erase != INT_MAX) isLegal.erase(isLegal.begin() + need_erase);
-		else
+		else // tính khoảng cách của 3 hướng đi tới điểm đến ( dựa trên hiệu của serial )
 		{
 			int shortest = INT_MAX;
 			int shortest_e = 0;
@@ -227,18 +293,19 @@ void TreeCycle::build(Node*& node, const int& End, const int& path_length)
 		}
 	}
 
+	// đệ quy tìm các hướng đi tiếp theo với mỗi node trái phải của node cha 
 	node->left_child = new Node(neighbor[isLegal.front()].toNum(), node->depth + 1);
 	node->left_child->parent = node;
-	neighbor[isLegal.front()].getMapValue() = false;
+	neighbor[isLegal.front()].mapValue() = false;	// gán cho node hiện tại không truy cập được 
 	build(node->left_child, End, path_length);
-	neighbor[isLegal.front()].getMapValue() = true;
+	neighbor[isLegal.front()].mapValue() = true;// sau khi tìm xong gán lại giá trị ban đầu để tiếp tục với những nhánh khác 
 
 	if (isLegal.size() > 1)
 	{
 		node->right_child = new Node(neighbor[isLegal.back()].toNum(), node->depth + 1);
 		node->right_child->parent = node;
-		neighbor[isLegal.back()].getMapValue() = false;
+		neighbor[isLegal.back()].mapValue() = false;
 		build(node->right_child, End, path_length);
-		neighbor[isLegal.back()].getMapValue() = true;
+		neighbor[isLegal.back()].mapValue() = true;
 	}
 }

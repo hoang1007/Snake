@@ -55,7 +55,8 @@ public:
         return iterator(head);
     }
 
-    iterator rbegin()
+    // trả về iterator phía trước của phần tử đầu 
+    iterator pbegin()
     {
         return iterator(nullptr);
     }

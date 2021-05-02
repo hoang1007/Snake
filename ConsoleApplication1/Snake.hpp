@@ -22,7 +22,7 @@ class Snake : public ReverseQueue<Block>
 	bool isSuitable(Block newBlock);
 	//thay đổi hướng đi của rắn
 	Direction changeDir();
-	stack<Direction> path;
+	stack<Direction> path;	// lưu lại hướng đi khi truy ngược chu trình
 public:
 	bool isEatFood;
 	bool alive;

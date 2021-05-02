@@ -169,7 +169,7 @@ void Game::loop()
 	{
 		frameStart = SDL_GetTicks();
 
-		//pollEvent();
+		pollEvent();
 		if (!isPause && snake.alive)	update();	// nếu không dừng thì tiếp tục game
 	
 		// thời gian chạy một khung hình
@@ -232,19 +232,5 @@ void Game::restart()
 		{
 			running = false;
 			return;
-		}
-		else if (e.type == SDL_MOUSEBUTTONDOWN)
-		{
-			int x, y;
-			SDL_GetMouseState(&x, &y);
-
-			if (restartButton.isClicked(x, y))
-			{
-				SDL_Delay(100);
-				restartButton.erase();
-				init();
-				loop();
-				return;
-			}
 		}
 }
