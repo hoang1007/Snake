@@ -1,6 +1,4 @@
 ﻿#include "Snake.hpp"
-#include <vector>
-#include <stack>
 #include <iostream>
 
 const int SIZE = 6;
@@ -60,7 +58,7 @@ struct TreeCycle
 {
 	struct Node;
 	Node* root;
-	std::vector<Node*> path;
+	vector<Node*> path;
 	TreeCycle() { root = nullptr; }
 	TreeCycle(int value)
 	{
@@ -76,6 +74,7 @@ struct TreeCycle
 	}
 	~TreeCycle()
 	{
+		cerr << "Destructor tree" << endl;
 		clear(root);
 	}
 	void build(Node*& node, const int &End, const int &path_length);
@@ -83,6 +82,7 @@ struct TreeCycle
 	{
 		Node* shortest = nullptr;
 		int max = 0;
+		cerr << "path size: " << path.size() << endl;
 		for (int i = 0; i < path.size(); i++)
 		{
 			int path_length = 0;
@@ -124,9 +124,34 @@ struct TreeCycle
 	};
 };
 
+void ReturnPath(stack<Direction> path)
+{
+	while (!path.empty())
+	{
+		Direction temp = path.top();
+		path.pop();
+		switch (temp)
+		{
+		case RIGHT:
+			cerr << "right ";
+			break;
+		case DOWN:
+			cerr << "down ";
+			break;
+		case UP:
+			cerr << "up ";
+			break;
+		case LEFT:
+			cerr << "left ";
+			break;
+		default:
+			break;
+		}
+	}
+}
+
 Direction Snake::autoMove(Block _food)
 {
-	static stack<Direction> path;
 	Coordinate head = Coordinate(front());
 	Coordinate tail = Coordinate(back());
 
@@ -135,6 +160,7 @@ Direction Snake::autoMove(Block _food)
 	
 	if (path.empty())
 	{
+		cerr << "path finding...\n";;
 		TreeCycle pathTree(head.toNum());
 		Coordinate food = Coordinate(_food);
 		pathTree.build(pathTree.root, tail.toNum(), SIZE * SIZE - size() - 1);
@@ -154,6 +180,7 @@ Direction Snake::autoMove(Block _food)
 	
 	if (!path.empty())
 	{
+		ReturnPath(path);
 		Direction dir = path.top();
 		path.pop();
 		return dir;
@@ -163,11 +190,13 @@ Direction Snake::autoMove(Block _food)
 
 void TreeCycle::build(Node*& node, const int& End, const int& path_length)
 {
-	if (path.size() == 4) return;
+	if (path.size() == 5) return;
 	if (node == nullptr) return;
-	if (node->depth == path_length && (End == node->data))
+
+	if (End == node->data)
 	{
-		path.push_back(node);
+		if (node->depth == path_length)
+			path.push_back(node);
 		return;
 	}
 
@@ -182,24 +211,36 @@ void TreeCycle::build(Node*& node, const int& End, const int& path_length)
 
 	vector<int> isLegal;
 	for (int i = 0; i < 4; i++)
-		if (neighbor[i].insideMap() & map[neighbor[i].y][neighbor[i].x])
+		if (neighbor[i].insideMap() && neighbor[i].getMapValue())
 			isLegal.push_back(i);
 
 	if (isLegal.size() == 0) return;
 	if (isLegal.size() == 3)
 	{
-		int shortest = INT_MAX;
-		int shortest_e = 0;
+		// loại hướng đi mà ngăn cách map
+		int need_erase = INT_MAX;
 		for (int i = 0; i < 3; i++)
 		{
-			int dist = abs(End - neighbor[isLegal[i]].toNum());
-			if (dist < shortest)
-			{
-				shortest = dist;
-				shortest_e = i;
-			}
+			if (neighbor[isLegal[i]].x == 0 || neighbor[isLegal[i]].x == SIZE - 1 ||
+				neighbor[isLegal[i]].y == 0 || neighbor[isLegal[i]].y == SIZE - 1)
+				need_erase = i;
 		}
-		isLegal.erase(isLegal.begin() + shortest_e);
+		if (need_erase != INT_MAX) isLegal.erase(isLegal.begin() + need_erase);
+		else
+		{
+			int shortest = INT_MAX;
+			int shortest_e = 0;
+			for (int i = 0; i < 3; i++)
+			{
+				int dist = abs(End - neighbor[isLegal[i]].toNum());
+				if (dist < shortest)
+				{
+					shortest = dist;
+					shortest_e = i;
+				}
+			}
+			isLegal.erase(isLegal.begin() + shortest_e);
+		}
 	}
 
 	node->left_child = new Node(neighbor[isLegal.front()].toNum(), node->depth + 1);

@@ -8,6 +8,7 @@
 #include "Block.hpp"
 #include "Queue.hpp"
 #include <vector>
+#include <stack>
 using namespace std;
 
 // liệt kê các bộ phận của rắn
@@ -21,6 +22,7 @@ class Snake : public ReverseQueue<Block>
 	bool isSuitable(Block newBlock);
 	//thay đổi hướng đi của rắn
 	Direction changeDir();
+	stack<Direction> path;
 public:
 	bool isEatFood;
 	bool alive;

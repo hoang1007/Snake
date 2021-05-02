@@ -169,7 +169,7 @@ void Game::loop()
 	{
 		frameStart = SDL_GetTicks();
 
-		pollEvent();
+		//pollEvent();
 		if (!isPause && snake.alive)	update();	// nếu không dừng thì tiếp tục game
 	
 		// thời gian chạy một khung hình
