@@ -15,6 +15,7 @@
 #include "Snake.hpp"
 #include "Food.hpp"
 #include <iostream>
+#include <vector>
 #include <stack>
 
 const int SIZE = 6;	// mặc định kích thước bản đồ là 6x6 
@@ -97,8 +98,7 @@ struct TreeCycle
 	struct Node;
 
 	Node* root;
-	ReverseQueue<Node*> destination;	// lưu lại node cuối của mỗi chu trình để truy ra cả chu trình 
-
+	vector<Node*> destination;	// lưu lại node cuối của mỗi chu trình để truy ra cả chu trình 
 	TreeCycle() { root = nullptr; }
 	TreeCycle(int value)
 	{
@@ -116,7 +116,6 @@ struct TreeCycle
 
 	~TreeCycle()
 	{
-		cerr << "Destructor tree" << endl;
 		clear(root);
 	}
 
@@ -128,30 +127,25 @@ struct TreeCycle
 	Node* findShortestPath(int food)
 	{
 		Node* shortest = nullptr;
-		int max = 0;
-		cerr << "path size: " << destination.size() << endl;
-		for (ReverseQueue<Node*>::iterator i = destination.end(); i != destination.pbegin(); i--)
+		int max = INT_MIN;
+		
+		for (int i = 0; i < destination.size(); i++)
 		{
 			int path_length = 0;
-			Node* temp = *i;
-			bool meetFood = false;	// trả về true nếu gặp food 
 			// duyệt từ phía cuối chu trình lên đầu
 			// lưu lại số node phải đi và so sánh với các chu trình khác 
-			while (temp)	
+			while (destination[i])	
 			{
-				path_length++;
-				if (temp->data == food)
-				{
-					meetFood = true;
+				if (destination[i]->data == food)
 					break;
-				}
-				temp = temp->parent;
+				path_length++;
+				destination[i] = destination[i]->parent;
 			}
 
-			if (meetFood && max < path_length)	// nếu tìm thấy chu trình nào xa hơn thì cập nhật shortest 
+			if (max < path_length)	// nếu tìm thấy chu trình nào có thức ăn xa hơn đuôi thì cập nhật shortest 
 			{
 				max = path_length;
-				shortest = temp;
+				shortest = destination[i];
 			}
 		}
 		destination.clear();	// xóa tất cả các chu trình cũ để tìm các chu trình mới 
@@ -187,22 +181,22 @@ Direction Snake::autoMove(Block _food)
 	// tọa độ của head và tail trên map bool 
 	Coordinate head = Coordinate(front());
 	Coordinate tail = Coordinate(back());
-
+	
 	// cập nhật vị trí của rắn trên map bool 
 	map[tail.y][tail.x] = true;		
 	map[head.y][head.x] = false;
-	
-	// *** đã được di chuyển đến file Snake.hpp ***
-	// static stack<Direction> path;	// lưu lại hướng đi khi truy ngược chu trình
-	// ********************************************
-
+	// global variable
+	static ReverseQueue<Direction> path;	// lưu lại hướng đi khi truy ngược
 	if (path.empty())
 	{
 		cerr << "path finding...\n";;
 		TreeCycle pathTree(head.toNum());
 		Coordinate food = Coordinate(_food);
-		pathTree.build(pathTree.root, tail.toNum(), SIZE * SIZE - size() - 1);
+		
+		pathTree.build(pathTree.root, tail.toNum(), 31); // 31 la chieu dai cua chu trinh Halminton
+
 		TreeCycle::Node* shortest = pathTree.findShortestPath(food.toNum());
+
 		if (shortest)
 		{
 			while (shortest->parent)
@@ -212,37 +206,35 @@ Direction Snake::autoMove(Block _food)
 				Coordinate src = Coordinate(shortest->parent->data),
 					dst = Coordinate(shortest->data);
 
-				if (src.x + 1 == dst.x) path.push(RIGHT);
-				else if (src.x - 1 == dst.x) path.push(LEFT);
-				else if (src.y + 1 == dst.y) path.push(DOWN);
-				else path.push(UP);
+				if (src.x + 1 == dst.x) path.push_back(RIGHT);
+				else if (src.x - 1 == dst.x) path.push_back(LEFT);
+				else if (src.y + 1 == dst.y) path.push_back(DOWN);
+				else path.push_back(UP);
 				shortest = shortest->parent;
 			}
 		}
 		else return nextDir;
 	}
-	
+
 	if (!path.empty())	// mỗi lượt đi trả về các hướng đi 
 	{
-		Direction dir = path.top();
-		path.pop();
-		return dir;
+		return path.pop();
 	}
 	return nextDir;	// nếu có lỗi trả về hướng đi hiện tại 
 }
 
 void TreeCycle::build(Node*& node, const int& End, const int& path_length)
 {
-	if (destination.size() == 30) return;	// giới hạn số chu trình tìm được là 30 để tiết kiệm thời gian 
+	if (destination.size() == 8) return;	// giới hạn số chu trình tìm được để tiết kiệm thời gian 
 	if (node == nullptr) return;	
 
 	// vì chu trình đi qua tất cả các ô trên map trừ rắn 
-	// node cuối cùng phải có độ sâu bằng số ô trống trên map 
+	// nên node cuối cùng phải có độ sâu bằng số ô trống trên map (path_length)
 
 	if (End == node->data)
 	{
 		if (node->depth == path_length)
-			destination.push(node);
+			destination.push_back(node);
 		return;
 	}
 

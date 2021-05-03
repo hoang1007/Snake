@@ -76,7 +76,7 @@ void Game::resourceInit()
 
 void Game::init()
 {
-	frameDelay = 5400 / FPS;
+	frameDelay = 5600 / FPS;
 
 	assets = Assets();
 	assets.load("assets.png", renderer);

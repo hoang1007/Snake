@@ -214,16 +214,6 @@ void Game::restart()
 		score_y = SCREEN_HEIGHT / 2;
 	text[SCORE].render(renderer, score_x, score_y);
 
-	// hiển thị nút chơi lại
-	//căn giữa
-	int button_x = Center(0, SCREEN_WIDTH, restartButton.getWidth()),
-		button_y = SCREEN_HEIGHT / 2;
-
-	restartButton.setCoordinate(button_x, button_y);
-	restartButton.resize(200, 200, true);	// chỉnh kích thước của nút lên 200 * 200
-
-	restartButton.paint(renderer, assets.texture);
-
 	SDL_RenderPresent(renderer);
 
 	SDL_Event e;

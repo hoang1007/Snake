@@ -27,6 +27,8 @@ public:
     ReverseQueue();
     ~ReverseQueue();
 
+    // thêm một node vào cuối danh sách 
+    void push_back(Type value);
     // thêm một node vào đầu hàng đợi
     void push(Type value);
     // xóa một node ở cuối hàng đợi và trả về giá trị của nó
@@ -215,6 +217,20 @@ template <class Type>
 int ReverseQueue<Type>::size()
 {
     return _size;
+}
+
+template<typename Type>
+void ReverseQueue<Type>::push_back(Type value)
+{
+    _size++;
+    Node* node = new Node(value);
+    if (head == NULL)
+        head = tail = node;
+    else
+    {
+        node->prev = tail;
+        tail = node;
+    }
 }
 
 template<typename Type>
