@@ -13,6 +13,7 @@
 
 
 #include "Snake.hpp"
+#include "Food.hpp"
 #include <iostream>
 #include <stack>
 
@@ -308,4 +309,19 @@ void TreeCycle::build(Node*& node, const int& End, const int& path_length)
 		build(node->right_child, End, path_length);
 		neighbor[isLegal.back()].mapValue() = true;
 	}
+}
+
+
+// cải tiến hàm spawn food bằng cách random trên map bool
+
+void Food::spawn()
+{
+	do
+	{
+		x = rand() % SIZE;
+		y = rand() % SIZE;
+	} 	while (!map[y][x]);
+
+	x = (x + 2) * GRID;
+	y = (y + 2) * GRID;
 }
