@@ -1,6 +1,8 @@
 # Game Snake
-## Em tự đánh giá game của em nhận được 9 điểm
 
+### Phần tự chơi xem ở branch automode
+
+## Em tự đánh giá game của em nhận được 9 điểm
 
 * Sử dụng nhiều class, tách file, kế thừa
 * Code snake sử dụng class template hàng đợi được viết bằng danh sách liên kết
@@ -11,5 +13,4 @@
 * Tham khảo cách cài đặt iterator từ [https://www.geeksforgeeks.org/implementing-iterator-pattern-of-a-single-linked-list/
 * Có thể lưu lại điểm cao nhất sau mỗi lần chơi
 
-## Video demo [https://youtu.be/m9cusaMkJjo]
-## Phần autoplay xem ở branch automode
+## Video demo [https://youtu.be/Yu1rS4I6Gik]
