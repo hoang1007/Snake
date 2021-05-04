@@ -1,14 +1,15 @@
-﻿/*
+﻿
+/*
 * Mỗi khi bắt đầu game hoặc rắn ăn thức ăn ta đi tìm một chu trình khép kín từ đầu tới đuôi của rắn
 * đi qua tất cả các ô vuông trên bản đồ mỗi ô một lần (chu trình Hamilton)
-* 
+*
 * Vì con rắn luôn đi theo chu trình trên nên lúc nào cũng tồn tại ít nhất một con đường sao cho
 * rắn không bao giờ tự đâm vào chính nó trừ khi chiều dài của nó vượt quá số ô vuông trên bản đồ
-* 
-* Sử dụng cây nhị phân vét cạn mọi đường đi có thể để tìm ra chu trình Hamilton 
+*
+* Sử dụng cây nhị phân vét cạn mọi đường đi có thể để tìm ra chu trình Hamilton
 * từ đó ta tìm ra con đường ngắn nhất từ đầu rắn tới thức ăn và đi theo nó
-* 
-* Vì độ phức tạp là O(n^2) nên bản đồ chỉ giới hạn ở kích thước 6x6 để không bị time limit 
+*
+* Vì độ phức tạp là O(2^n) nên bản đồ chỉ giới hạn ở kích thước 6x6 để không bị time limit
 */
 
 
@@ -23,7 +24,7 @@ const int SIZE = 6;	// mặc định kích thước bản đồ là 6x6
 // bản đồ mô tả vị trí của rắn để có thể xét va chạm với O(1)
 // với mỗi nước đi của rắn ta cập nhật lại bản đồ (đầu mới thêm là 0 và đuôi xóa đi là 1)
 
-bool map[SIZE][SIZE] = 
+bool map[SIZE][SIZE] =
 {
 	{0, 0, 0, 0, 0, 1},			// 0 là vị trí của snake 
 	{1, 1, 1, 1, 1, 1},
@@ -105,7 +106,7 @@ struct TreeCycle
 		root = new Node(value, 0);
 	}
 	// Thu hồi vùng nhớ khi hoàn thành 
-	void clear(Node* &node)
+	void clear(Node*& node)
 	{
 		if (node == nullptr) return;
 		clear(node->left_child);
@@ -120,7 +121,7 @@ struct TreeCycle
 	}
 
 	// tìm tất cả các chu trình Hamilton 
-	void build(Node*& node, const int &End, const int &path_length);
+	void build(Node*& node, const int& End, const int& path_length);
 
 	// tìm đường đi xa nhất từ đuôi rắn đến thức ăn
 	// tức là gần nhất từ đầu tới thức ăn 
@@ -128,19 +129,13 @@ struct TreeCycle
 	{
 		Node* shortest = nullptr;
 		int max = INT_MIN;
-		
+
 		for (int i = 0; i < destination.size(); i++)
 		{
 			int path_length = 0;
 			// duyệt từ phía cuối chu trình lên đầu
 			// lưu lại số node phải đi và so sánh với các chu trình khác 
-			while (destination[i])	
-			{
-				if (destination[i]->data == food)
-					break;
-				path_length++;
-				destination[i] = destination[i]->parent;
-			}
+			for (; destination[i]->data != food; destination[i] = destination[i]->parent, path_length++);
 
 			if (max < path_length)	// nếu tìm thấy chu trình nào có thức ăn xa hơn đuôi thì cập nhật shortest 
 			{
@@ -178,12 +173,12 @@ struct TreeCycle
 
 Direction Snake::autoMove(Block _food)
 {
-	// tọa độ của head và tail trên map bool 
+	// tọa độ của head và tail trên bitmap
 	Coordinate head = Coordinate(front());
 	Coordinate tail = Coordinate(back());
-	
-	// cập nhật vị trí của rắn trên map bool 
-	map[tail.y][tail.x] = true;		
+
+	// cập nhật vị trí của rắn trên bitmap 
+	map[tail.y][tail.x] = true;
 	map[head.y][head.x] = false;
 	// global variable
 	static ReverseQueue<Direction> path;	// lưu lại hướng đi khi truy ngược
@@ -192,7 +187,7 @@ Direction Snake::autoMove(Block _food)
 		cerr << "path finding...\n";;
 		TreeCycle pathTree(head.toNum());
 		Coordinate food = Coordinate(_food);
-		
+
 		pathTree.build(pathTree.root, tail.toNum(), 31); // 31 la chieu dai cua chu trinh Halminton
 
 		TreeCycle::Node* shortest = pathTree.findShortestPath(food.toNum());
@@ -226,7 +221,7 @@ Direction Snake::autoMove(Block _food)
 void TreeCycle::build(Node*& node, const int& End, const int& path_length)
 {
 	if (destination.size() == 8) return;	// giới hạn số chu trình tìm được để tiết kiệm thời gian 
-	if (node == nullptr) return;	
+	if (node == nullptr) return;
 
 	// vì chu trình đi qua tất cả các ô trên map trừ rắn 
 	// nên node cuối cùng phải có độ sâu bằng số ô trống trên map (path_length)
@@ -268,22 +263,20 @@ void TreeCycle::build(Node*& node, const int& End, const int& path_length)
 				neighbor[isLegal[i]].y == 0 || neighbor[isLegal[i]].y == SIZE - 1)
 				need_erase = i;
 		}
-		if (need_erase != INT_MAX) isLegal.erase(isLegal.begin() + need_erase);
-		else // tính khoảng cách của 3 hướng đi tới điểm đến ( dựa trên hiệu của serial )
+		if (need_erase == INT_MAX)
 		{
 			int shortest = INT_MAX;
-			int shortest_e = 0;
 			for (int i = 0; i < 3; i++)
 			{
 				int dist = abs(End - neighbor[isLegal[i]].toNum());
 				if (dist < shortest)
 				{
 					shortest = dist;
-					shortest_e = i;
+					need_erase = i;
 				}
 			}
-			isLegal.erase(isLegal.begin() + shortest_e);
 		}
+		isLegal.erase(isLegal.begin() + need_erase);
 	}
 
 	// đệ quy tìm các hướng đi tiếp theo với mỗi node trái phải của node cha 
@@ -293,7 +286,7 @@ void TreeCycle::build(Node*& node, const int& End, const int& path_length)
 	build(node->left_child, End, path_length);
 	neighbor[isLegal.front()].mapValue() = true;// sau khi tìm xong gán lại giá trị ban đầu để tiếp tục với những nhánh khác 
 
-	if (isLegal.size() > 1)
+	if (isLegal.size() == 2)
 	{
 		node->right_child = new Node(neighbor[isLegal.back()].toNum(), node->depth + 1);
 		node->right_child->parent = node;
@@ -312,7 +305,7 @@ void Food::spawn()
 	{
 		x = rand() % SIZE;
 		y = rand() % SIZE;
-	} 	while (!map[y][x]);
+	} while (!map[y][x]);
 
 	x = (x + 2) * GRID;
 	y = (y + 2) * GRID;
